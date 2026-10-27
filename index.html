@@ -90,6 +90,44 @@
                 </div>
             </section>
 
+            <!-- TAB: RESOURCE & NETWORK MONITOR -->
+            <section id="tab-resources" class="tab-content">
+                <h2>Resource & Network Monitor</h2>
+            
+    
+                 <!-- NETWORK & IP STATS -->
+                <div class="tool-box">
+                    <h3>🌐 Network & GeoIP Info</h3>
+                    <div id="ip-info" class="result-area">Məlumatlar yüklənir...</div>
+                </div>
+                
+                <!-- LIVE PING / LATENCY CHECKER -->
+                <div class="tool-box">
+                    <h3>⚡ Live Ping (Latency) Tracker</h3>
+                    <div class="ping-grid">
+                        <div class="ping-card">
+                            <span>Google DNS (8.8.8.8)</span>
+                            <strong id="ping-google">-- ms</strong>
+                        </div>
+                        <div class="ping-card">
+                            <span>Cloudflare (1.1.1.1)</span>
+                            <strong id="ping-cf">-- ms</strong>
+                        </div>
+                        <div class="ping-card">
+                            <span>TryHackMe</span>
+                            <strong id="ping-thm">-- ms</strong>
+                        </div>
+                    </div>
+                    <button onclick="checkAllPings()" style="margin-top: 15px;">Ping-ləri Yenilə</button>
+                </div>
+
+                <!-- SYSTEM & BROWSER STATS -->
+                <div class="tool-box">
+                    <h3>💻 System & Browser Environment</h3>
+                    <div id="sys-info" class="result-area"></div>
+                </div>
+            </section>
+
         </main>
     </div>
 
@@ -170,6 +208,82 @@
             msg.innerText = "Yadda saxlanıldı!";
             setTimeout(() => msg.innerText = "", 2000);
         }
+
+
+        // Sənin əvvəldən olan mövcud JavaScript kodların (Login, Tab dəyişmə və s.)
+        document.addEventListener("DOMContentLoaded", () => {
+            if (localStorage.getItem("rat_session")) {
+                showPanel();
+                document.getElementById("target-notes").value = localStorage.getItem("rat_notes") || "";
+            }
+        });
+
+        function handleLogin() {
+            // ...
+        }
+
+
+        // ==========================================
+        // YENİ ƏLAVƏ OLUNAN RESOURCE MONITOR KODLARI:
+        // ==========================================
+
+        function loadIPInfo() {
+            fetch('https://ipapi.co/json/')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("ip-info").innerHTML = `
+                        <p><strong>Public IP:</strong> <span style="color:#38bdf8">${data.ip}</span></p>
+                        <p><strong>Ölkə / Şəhər:</strong> ${data.country_name} (${data.city})</p>
+                        <p><strong>ISP / Provayder:</strong> ${data.org}</p>
+                        <p><strong>ASN:</strong> ${data.asn}</p>
+                    `;
+                })
+                .catch(() => {
+                    document.getElementById("ip-info").innerText = "IP məlumatları alına bilmədi (AdBlocker və ya şəbəkə bloku ola bilər).";
+                });
+        }
+
+        function measurePing(url, elementId) {
+            const start = performance.now();
+            fetch(url, { mode: 'no-cors', cache: 'no-cache' })
+                .then(() => {
+                    const end = performance.now();
+                    const duration = Math.round(end - start);
+                    document.getElementById(elementId).innerText = duration + " ms";
+                })
+                .catch(() => {
+                    document.getElementById(elementId).innerText = "Timeout / Error";
+                });
+        }
+
+        function checkAllPings() {
+            measurePing('https://8.8.8.8', 'ping-google');
+            measurePing('https://1.1.1.1', 'ping-cf');
+            measurePing('https://tryhackme.com', 'ping-thm');
+        }
+
+        function loadSystemInfo() {
+            const mem = navigator.deviceMemory ? `${navigator.deviceMemory} GB (Təxmini)` : "Bilinmir";
+            const cores = navigator.hardwareConcurrency || "Bilinmir";
+            
+            document.getElementById("sys-info").innerHTML = `
+                <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
+                <p><strong>Ekran Ölçüsü:</strong> ${window.screen.width}x${window.screen.height}</p>
+                <p><strong>CPU Nüvə Sayı:</strong> ${cores}</p>
+                <p><strong>RAM Yaddaş:</strong> ${mem}</p>
+                <p><strong>Onlayn Status:</strong> <span style="color:${navigator.onLine ? '#4ade80' : '#f87171'}">${navigator.onLine ? 'CONNECTED' : 'OFFLINE'}</span></p>
+            `;
+        }
+
+        // Səhifə açılanda avtomatik yeni funksiyaları işə salmaq üçün:
+        // Əgər evvəldən `DOMContentLoaded` varsa, bu 3 sətri onun daxilinə də ata bilərsən
+        window.addEventListener("load", () => {
+            loadIPInfo();
+            checkAllPings();
+            loadSystemInfo();
+        });
+
+
     </script>
 </body>
 </html>
