@@ -1,16 +1,81 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="az">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hoş Geldiniz</title>
+    <title>Rat Web - İdarəetmə Paneli</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="card">
-        <h1>Sistem Yayında 🚀</h1>
-        <p>Web sitemize hoş geldiniz. Çok yakında yeni içerikler ve projeler burada yer alacak.</p>
-        <a href="#" class="btn">İletişime Geç</a>
+
+    <!-- LOGİN EKRANI -->
+    <div id="login-card" class="card">
+        <h2>Sistemə Giriş</h2>
+        <p class="subtitle">Daxil olmaq üçün məlumatları yazın</p>
+        
+        <div class="input-group">
+            <input type="text" id="username" placeholder="İstifadəçi adı" autocomplete="off">
+        </div>
+        <div class="input-group">
+            <input type="password" id="password" placeholder="Şifrə">
+        </div>
+        
+        <button onclick="handleLogin()">Daxil Ol</button>
+        <p id="error-msg" class="error"></p>
     </div>
+
+    <!-- İŞ SƏHİFƏSİ / PANEL EKRANI -->
+    <div id="panel-card" class="card panel-card hidden">
+        <div class="panel-header">
+            <h2>Xoş gəldin, <span id="user-display"></span> 👋</h2>
+            <button class="logout-btn" onclick="handleLogout()">Çıxış Et</button>
+        </div>
+        <hr>
+        <div class="panel-body">
+            <h3>İş Sahəsi</h3>
+            <p>Bura sənin idarəetmə panelindir. Tez-tez istifadə etdiyin keçidləri və alətləri bura yerləşdirə bilərsən.</p>
+            
+            <div class="tools-grid">
+                <a href="https://github.com" target="_blank" class="tool-btn">GitHub Page</a>
+                <a href="https://tradingview.com" target="_blank" class="tool-btn">TradingView</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Səhifə açılanda giriş olunub-olunmadığını yoxla
+        document.addEventListener("DOMContentLoaded", () => {
+            const loggedInUser = localStorage.getItem("rat_session");
+            if (loggedInUser) {
+                showPanel(loggedInUser);
+            }
+        });
+
+        function handleLogin() {
+            const user = document.getElementById("username").value.trim();
+            const pass = document.getElementById("password").value.trim();
+            const errorMsg = document.getElementById("error-msg");
+
+            // İstədiyin istifadəçi adı və şifrəni bura təyin edirsən:
+            if (user === "rat" && pass === "123456") {
+                localStorage.setItem("rat_session", user);
+                showPanel(user);
+                errorMsg.innerText = "";
+            } else {
+                errorMsg.innerText = "İstifadəçi adı və ya şifrə səhvdir!";
+            }
+        }
+
+        function showPanel(username) {
+            document.getElementById("login-card").classList.add("hidden");
+            document.getElementById("panel-card").classList.remove("hidden");
+            document.getElementById("user-display").innerText = username;
+        }
+
+        function handleLogout() {
+            localStorage.removeItem("rat_session");
+            location.reload();
+        }
+    </script>
 </body>
 </html>

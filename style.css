@@ -1,7 +1,7 @@
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -12,42 +12,119 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding: 20px;
 }
 
 .card {
-    background-color: #1e293b;
+    background: #1e293b;
     padding: 2.5rem;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    text-align: center;
+    width: 100%;
     max-width: 400px;
-    border: 1px solid #334155;
+    transition: all 0.3s ease;
 }
 
-.card h1 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
+.panel-card {
+    max-width: 600px;
+}
+
+h2 {
+    margin-bottom: 0.5rem;
     color: #38bdf8;
 }
 
-.card p {
-    font-size: 1rem;
+.subtitle {
+    font-size: 0.9rem;
     color: #94a3b8;
     margin-bottom: 1.5rem;
-    line-height: 1.5;
 }
 
-.btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background-color: #38bdf8;
-    color: #0f172a;
-    text-decoration: none;
-    font-weight: bold;
+.input-group {
+    margin-bottom: 1rem;
+}
+
+input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #334155;
     border-radius: 6px;
-    transition: background-color 0.2s ease;
+    background: #0f172a;
+    color: #fff;
+    outline: none;
 }
 
-.btn:hover {
-    background-color: #0ea5e9;
+input:focus {
+    border-color: #38bdf8;
+}
+
+button {
+    width: 100%;
+    padding: 0.75rem;
+    background: #0284c7;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: #0369a1;
+}
+
+.error {
+    color: #f87171;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Panel Stilləri */
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logout-btn {
+    width: auto;
+    padding: 0.5rem 1rem;
+    background: #ef4444;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: #334155;
+    margin: 1.5rem 0;
+}
+
+.tools-grid {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.tool-btn {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #334155;
+    color: #38bdf8;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.tool-btn:hover {
+    background: #475569;
 }
