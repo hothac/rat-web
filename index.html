@@ -3,78 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rat Web - İdarəetmə Paneli</title>
+    <title>Rat Cyber Hub - Control Panel</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <!-- LOGİN EKRANI -->
     <div id="login-card" class="card">
-        <h2>Sistemə Giriş</h2>
-        <p class="subtitle">Daxil olmaq üçün məlumatları yazın</p>
-        
+        <h2>Cyber Security Hub</h2>
+        <p class="subtitle">Sistemə daxil olun</p>
         <div class="input-group">
-            <input type="text" id="username" placeholder="İstifadəçi adı" autocomplete="off">
+            <input type="text" id="username" placeholder="İstifadəçi adı">
         </div>
         <div class="input-group">
             <input type="password" id="password" placeholder="Şifrə">
         </div>
-        
         <button onclick="handleLogin()">Daxil Ol</button>
         <p id="error-msg" class="error"></p>
     </div>
 
-    <!-- İŞ SƏHİFƏSİ / PANEL EKRANI -->
-    <div id="panel-card" class="card panel-card hidden">
-        <div class="panel-header">
-            <h2>Xoş gəldin, <span id="user-display"></span> 👋</h2>
-            <button class="logout-btn" onclick="handleLogout()">Çıxış Et</button>
-        </div>
-        <hr>
-        <div class="panel-body">
-            <h3>İş Sahəsi</h3>
-            <p>Bura sənin idarəetmə panelindir. Tez-tez istifadə etdiyin keçidləri və alətləri bura yerləşdirə bilərsən.</p>
-            
-            <div class="tools-grid">
-                <a href="https://github.com" target="_blank" class="tool-btn">GitHub Page</a>
-                <a href="https://tradingview.com" target="_blank" class="tool-btn">TradingView</a>
+    <!-- MAIN DASHBOARD (PANEL) -->
+    <div id="panel-card" class="dashboard hidden">
+        
+        <!-- SIDEBAR MENYU -->
+        <aside class="sidebar">
+            <div class="brand">
+                <h3>RAT HUB ⚡</h3>
             </div>
-        </div>
+            <nav class="menu">
+                <button class="menu-btn active" onclick="switchTab('apps')">🛠️ Apps & Encoders</button>
+                <button class="menu-btn" onclick="switchTab('calcs')">🧮 Calculators</button>
+                <button class="menu-btn" onclick="switchTab('resources')">🌐 Lab & Resources</button>
+                <button class="menu-btn" onclick="switchTab('notes')">📝 Target Notes</button>
+            </nav>
+            <button class="logout-btn" onclick="handleLogout()">Çıxış Et</button>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="content">
+            
+            <!-- TAB 1: APPS & ENCODERS -->
+            <section id="tab-apps" class="tab-content active">
+                <h2>Apps & Crypto Encoders</h2>
+                <div class="tool-box">
+                    <h3>Base64 / URL Encoder</h3>
+                    <textarea id="encoder-input" placeholder="Mətni bura daxil edin..."></textarea>
+                    <div class="btn-group">
+                        <button onclick="b64Encode()">Base64 Encode</button>
+                        <button onclick="b64Decode()">Base64 Decode</button>
+                        <button onclick="urlEncode()">URL Encode</button>
+                        <button onclick="urlDecode()">URL Decode</button>
+                    </div>
+                    <textarea id="encoder-output" readonly placeholder="Nəticə..."></textarea>
+                </div>
+            </section>
+
+            <!-- TAB 2: CALCULATORS -->
+            <section id="tab-calcs" class="tab-content">
+                <h2>Network & Subnet Calculators</h2>
+                <div class="tool-box">
+                    <h3>Subnet CIDR Info</h3>
+                    <input type="text" id="cidr-input" placeholder="Nümunə: 192.168.1.1/24">
+                    <button onclick="calcSubnet()">Hesabla</button>
+                    <div id="calc-result" class="result-area"></div>
+                </div>
+            </section>
+
+            <!-- TAB 3: LAB & RESOURCES -->
+            <section id="tab-resources" class="tab-content">
+                <h2>Lab & Resource Hub</h2>
+                <div class="grid-links">
+                    <a href="https://tryhackme.com" target="_blank" class="hub-card">TryHackMe</a>
+                    <a href="https://hackthebox.com" target="_blank" class="hub-card">Hack The Box</a>
+                    <a href="https://portswigger.net" target="_blank" class="hub-card">PortSwigger Web Academy</a>
+                    <a href="https://gchq.github.io/CyberChef/" target="_blank" class="hub-card">CyberChef Standalone</a>
+                </div>
+            </section>
+
+            <!-- TAB 4: TARGET NOTES -->
+            <section id="tab-notes" class="tab-content">
+                <h2>Target Notebook</h2>
+                <div class="tool-box">
+                    <textarea id="target-notes" placeholder="Hədəf IP-ləri, scan nəticələrini və qeydlərini buraya yazın..."></textarea>
+                    <button onclick="saveNotes()">Qeydləri Yadda Saxla</button>
+                    <span id="note-saved-msg" style="color: #4ade80; margin-left: 10px;"></span>
+                </div>
+            </section>
+
+        </main>
     </div>
 
     <script>
-        // Səhifə açılanda giriş olunub-olunmadığını yoxla
         document.addEventListener("DOMContentLoaded", () => {
-            const loggedInUser = localStorage.getItem("rat_session");
-            if (loggedInUser) {
-                showPanel(loggedInUser);
+            if (localStorage.getItem("rat_session")) {
+                showPanel();
+                document.getElementById("target-notes").value = localStorage.getItem("rat_notes") || "";
             }
         });
 
         function handleLogin() {
-            const user = document.getElementById("username").value.trim();
-            const pass = document.getElementById("password").value.trim();
-            const errorMsg = document.getElementById("error-msg");
-
-            // İstədiyin istifadəçi adı və şifrəni bura təyin edirsən:
-            if (user === "rat" && pass === "123456") {
-                localStorage.setItem("rat_session", user);
-                showPanel(user);
-                errorMsg.innerText = "";
+            const u = document.getElementById("username").value.trim();
+            const p = document.getElementById("password").value.trim();
+            if (u === "rat" && p === "123456") {
+                localStorage.setItem("rat_session", u);
+                showPanel();
             } else {
-                errorMsg.innerText = "İstifadəçi adı və ya şifrə səhvdir!";
+                document.getElementById("error-msg").innerText = "Səhv məlumat!";
             }
         }
 
-        function showPanel(username) {
+        function showPanel() {
             document.getElementById("login-card").classList.add("hidden");
             document.getElementById("panel-card").classList.remove("hidden");
-            document.getElementById("user-display").innerText = username;
         }
 
         function handleLogout() {
             localStorage.removeItem("rat_session");
             location.reload();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+            document.querySelectorAll(".menu-btn").forEach(el => el.classList.remove("active"));
+            
+            document.getElementById("tab-" + tabName).classList.add("active");
+            event.currentTarget.classList.add("active");
+        }
+
+        // ENCODER FUNCTIONS
+        function b64Encode() {
+            const val = document.getElementById("encoder-input").value;
+            document.getElementById("encoder-output").value = btoa(val);
+        }
+        function b64Decode() {
+            try {
+                const val = document.getElementById("encoder-input").value;
+                document.getElementById("encoder-output").value = atob(val);
+            } catch(e) { alert("Xətalı Base64!"); }
+        }
+        function urlEncode() {
+            const val = document.getElementById("encoder-input").value;
+            document.getElementById("encoder-output").value = encodeURIComponent(val);
+        }
+        function urlDecode() {
+            const val = document.getElementById("encoder-input").value;
+            document.getElementById("encoder-output").value = decodeURIComponent(val);
+        }
+
+        // CALCULATOR FUNCTION
+        function calcSubnet() {
+            const input = document.getElementById("cidr-input").value;
+            const res = document.getElementById("calc-result");
+            if(input.includes("/")) {
+                const parts = input.split("/");
+                res.innerHTML = `<p><strong>IP:</strong> ${parts[0]}</p><p><strong>CIDR Prefix:</strong> /${parts[1]}</p>`;
+            } else {
+                res.innerText = "Zəhmət olmasa CIDR formatında yazın (örn: 192.168.1.1/24)";
+            }
+        }
+
+        // NOTES FUNCTION
+        function saveNotes() {
+            const val = document.getElementById("target-notes").value;
+            localStorage.setItem("rat_notes", val);
+            const msg = document.getElementById("note-saved-msg");
+            msg.innerText = "Yadda saxlanıldı!";
+            setTimeout(() => msg.innerText = "", 2000);
         }
     </script>
 </body>
