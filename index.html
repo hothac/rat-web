@@ -12,13 +12,15 @@
     <div id="login-card" class="card">
         <h2>Cyber Security Hub</h2>
         <p class="subtitle">Sistemə daxil olun</p>
+        
         <div class="input-group">
-            <input type="text" id="username" placeholder="İstifadəçi adı">
+            <input type="text" id="username" placeholder="İstifadəçi adı" autocomplete="off">
         </div>
         <div class="input-group">
             <input type="password" id="password" placeholder="Şifrə">
         </div>
-        <button onclick="handleLogin()">Daxil Ol</button>
+        
+        <button type="button" onclick="handleLogin()">Daxil Ol</button>
         <p id="error-msg" class="error"></p>
     </div>
 
@@ -140,20 +142,45 @@
         });
 
         function handleLogin() {
-            const u = document.getElementById("username").value.trim();
-            const p = document.getElementById("password").value.trim();
-            if (u === "rat" && p === "123456") {
-                localStorage.setItem("rat_session", u);
+            const userField = document.getElementById("username");
+            const passField = document.getElementById("password");
+            const errorMsg = document.getElementById("error-msg");
+
+            if (!userField || !passField) {
+                console.error("Input sahələri tapılmadı!");
+                return;
+            }
+
+            const user = userField.value.trim();
+            const pass = passField.value.trim();
+
+            // Təyin etdiyin istifadəçi adı və şifrə:
+            if (user === "rat" && pass === "123456") {
+                localStorage.setItem("rat_session", user);
                 showPanel();
+                if (errorMsg) errorMsg.innerText = "";
             } else {
-                document.getElementById("error-msg").innerText = "Səhv məlumat!";
+                if (errorMsg) errorMsg.innerText = "İstifadəçi adı və ya şifrə səhvdir!";
             }
         }
 
+        // Paneli Göstərmək Funksiyası
         function showPanel() {
-            document.getElementById("login-card").classList.add("hidden");
-            document.getElementById("panel-card").classList.remove("hidden");
+            const loginCard = document.getElementById("login-card");
+            const panelCard = document.getElementById("panel-card");
+
+            if (loginCard && panelCard) {
+                loginCard.classList.add("hidden");
+                panelCard.classList.remove("hidden");
+            }
         }
+
+        // Səhifə yüklənəndə sessiyanı yoxla
+        document.addEventListener("DOMContentLoaded", () => {
+            if (localStorage.getItem("rat_session")) {
+                showPanel();
+            }
+        });
 
         function handleLogout() {
             localStorage.removeItem("rat_session");
@@ -211,73 +238,64 @@
 
 
         // Sənin əvvəldən olan mövcud JavaScript kodların (Login, Tab dəyişmə və s.)
-        document.addEventListener("DOMContentLoaded", () => {
-            if (localStorage.getItem("rat_session")) {
-                showPanel();
-                document.getElementById("target-notes").value = localStorage.getItem("rat_notes") || "";
-            }
-        });
-
-        function handleLogin() {
-            // ...
-        }
-
-
-        // ==========================================
-        // YENİ ƏLAVƏ OLUNAN RESOURCE MONITOR KODLARI:
-        // ==========================================
-
+        // IP Məlumatlarını Yüklə
         function loadIPInfo() {
-            fetch('https://ipapi.co/json/')
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById("ip-info").innerHTML = `
-                        <p><strong>Public IP:</strong> <span style="color:#38bdf8">${data.ip}</span></p>
-                        <p><strong>Ölkə / Şəhər:</strong> ${data.country_name} (${data.city})</p>
-                        <p><strong>ISP / Provayder:</strong> ${data.org}</p>
-                        <p><strong>ASN:</strong> ${data.asn}</p>
-                    `;
-                })
-                .catch(() => {
-                    document.getElementById("ip-info").innerText = "IP məlumatları alına bilmədi (AdBlocker və ya şəbəkə bloku ola bilər).";
-                });
-        }
+    fetch('https://ipapi.co/json/')
+        .then(res => res.json())
+        .then(data => {
+            const el = document.getElementById("ip-info");
+            if(el) {
+                el.innerHTML = `
+                    <p><strong>Public IP:</strong> <span style="color:#38bdf8">${data.ip || 'Bilinmir'}</span></p>
+                    <p><strong>Ölkə / Şəhər:</strong> ${data.country_name || ''} (${data.city || ''})</p>
+                    <p><strong>ISP:</strong> ${data.org || 'Bilinmir'}</p>
+                `;
+            }
+        })
+        .catch(() => {
+            const el = document.getElementById("ip-info");
+            if(el) el.innerText = "IP məlumatları alına bilmədi (AdBlocker engeli ola bilər).";
+        });
+}
 
+        // Güvenli Ping Ölçüm Fonksiyonu (Tarayıcı Uyumlu)
         function measurePing(url, elementId) {
-            const start = performance.now();
-            fetch(url, { mode: 'no-cors', cache: 'no-cache' })
-                .then(() => {
-                    const end = performance.now();
-                    const duration = Math.round(end - start);
-                    document.getElementById(elementId).innerText = duration + " ms";
-                })
-                .catch(() => {
-                    document.getElementById(elementId).innerText = "Timeout / Error";
-                });
-        }
+    const start = performance.now();
+    // Cache'i bypass etmek için query parametresi ekliyoruz
+    const targetUrl = url + '?t=' + new Date().getTime();
+    
+    fetch(targetUrl, { mode: 'no-cors', cache: 'no-cache' })
+        .then(() => {
+            const duration = Math.round(performance.now() - start);
+            const el = document.getElementById(elementId);
+            if(el) el.innerText = duration + " ms";
+        })
+        .catch(() => {
+            const el = document.getElementById(elementId);
+            if(el) el.innerText = "Timeout / Error";
+        });
+}
 
         function checkAllPings() {
-            measurePing('https://8.8.8.8', 'ping-google');
-            measurePing('https://1.1.1.1', 'ping-cf');
-            measurePing('https://tryhackme.com', 'ping-thm');
-        }
+    // Ham IP yerine HTTPS destekli gerçek endpoint'ler kullanıyoruz:
+    measurePing('https://dns.google/resolve', 'ping-google');
+    measurePing('https://1.1.1.1/cdn-cgi/trace', 'ping-cf');
+    measurePing('https://tryhackme.com/favicon.ico', 'ping-thm');
+}
 
         function loadSystemInfo() {
-            const mem = navigator.deviceMemory ? `${navigator.deviceMemory} GB (Təxmini)` : "Bilinmir";
-            const cores = navigator.hardwareConcurrency || "Bilinmir";
-            
-            document.getElementById("sys-info").innerHTML = `
-                <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
-                <p><strong>Ekran Ölçüsü:</strong> ${window.screen.width}x${window.screen.height}</p>
-                <p><strong>CPU Nüvə Sayı:</strong> ${cores}</p>
-                <p><strong>RAM Yaddaş:</strong> ${mem}</p>
-                <p><strong>Onlayn Status:</strong> <span style="color:${navigator.onLine ? '#4ade80' : '#f87171'}">${navigator.onLine ? 'CONNECTED' : 'OFFLINE'}</span></p>
-            `;
-        }
+    const el = document.getElementById("sys-info");
+    if(el) {
+        el.innerHTML = `
+            <p><strong>Ekran Ölçüsü:</strong> ${window.screen.width}x${window.screen.height}</p>
+            <p><strong>CPU Nüvə Sayı:</strong> ${navigator.hardwareConcurrency || 'Bilinmir'}</p>
+            <p><strong>RAM Yaddaş:</strong> ${navigator.deviceMemory ? navigator.deviceMemory + ' GB (Təxmini)' : 'Bilinmir'}</p>
+        `;
+    }
+}
 
-        // Səhifə açılanda avtomatik yeni funksiyaları işə salmaq üçün:
-        // Əgər evvəldən `DOMContentLoaded` varsa, bu 3 sətri onun daxilinə də ata bilərsən
-        window.addEventListener("load", () => {
+        // Sayfa yüklendiğinde hepsini başlat
+        window.addEventListener("DOMContentLoaded", () => {
             loadIPInfo();
             checkAllPings();
             loadSystemInfo();
