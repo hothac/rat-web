@@ -129,6 +129,13 @@
                     <div id="sys-info" class="result-area"></div>
                 </div>
             </section>
+            
+            <!-- Apps Bölməsinin Ən Altına Yapışdırılacaq HTML -->
+            <div class="tool-box" style="margin-top: 20px;">
+                <h3>🔑 SHA-256 Hash Generator</h3>
+                <input type="text" id="hash-input" placeholder="Mətni daxil edin..." oninput="generateHash()" style="margin-bottom: 10px;">
+                <textarea id="hash-output" readonly placeholder="SHA-256 Hash Nəticəsi..." style="height: 60px;"></textarea>
+            </div>
 
         </main>
     </div>
@@ -155,7 +162,7 @@
             const pass = passField.value.trim();
 
             // Təyin etdiyin istifadəçi adı və şifrə:
-            if (user === "rat" && pass === "123456") {
+            if (user === "rat" && pass === "@@@@stfu@@@@42") {
                 localStorage.setItem("rat_session", user);
                 showPanel();
                 if (errorMsg) errorMsg.innerText = "";
@@ -303,5 +310,6 @@
 
 
     </script>
+    <script src="script.js"></script>
 </body>
 </html>
