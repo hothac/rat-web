@@ -148,27 +148,43 @@
             }
         });
 
+        // 1. Giriş edərkən sessionStorage istifadə et
         function handleLogin() {
             const userField = document.getElementById("username");
             const passField = document.getElementById("password");
             const errorMsg = document.getElementById("error-msg");
 
-            if (!userField || !passField) {
-                console.error("Input sahələri tapılmadı!");
-                return;
-            }
-
             const user = userField.value.trim();
             const pass = passField.value.trim();
 
-            // Təyin etdiyin istifadəçi adı və şifrə:
-            if (user === "rat" && pass === "@@@@stfu@@@@42") {
-                localStorage.setItem("rat_session", user);
+            if (user === "rat" && pass === "123456") {
+                // localStorage əvəzinə sessionStorage yazırıq:
+                sessionStorage.setItem("rat_session", user);
                 showPanel();
                 if (errorMsg) errorMsg.innerText = "";
             } else {
                 if (errorMsg) errorMsg.innerText = "İstifadəçi adı və ya şifrə səhvdir!";
             }
+        }
+
+        // 2. Səhifə açılanda/yenilənəndə sessiyanı təmizlə ki, HƏR DƏFƏ login istəsin
+        document.addEventListener("DOMContentLoaded", () => {
+            // Səhifə hər dəfə açılanda və ya F5 olunanda sessiyanı silirik:
+            sessionStorage.removeItem("rat_session");
+    
+            // Login kartını göstər, paneli gizlət
+            const loginCard = document.getElementById("login-card");
+            const panelCard = document.getElementById("panel-card");
+            if (loginCard && panelCard) {
+                loginCard.classList.remove("hidden");
+                panelCard.classList.add("hidden");
+            }
+        });
+
+        // 3. Çıxış funksiyasını da sessionStorage-ə uyğunlaşdır
+        function handleLogout() {
+            sessionStorage.removeItem("rat_session");
+            location.reload();
         }
 
         // Paneli Göstərmək Funksiyası
@@ -247,59 +263,61 @@
         // Sənin əvvəldən olan mövcud JavaScript kodların (Login, Tab dəyişmə və s.)
         // IP Məlumatlarını Yüklə
         function loadIPInfo() {
-    fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
-            const el = document.getElementById("ip-info");
-            if(el) {
-                el.innerHTML = `
-                    <p><strong>Public IP:</strong> <span style="color:#38bdf8">${data.ip || 'Bilinmir'}</span></p>
-                    <p><strong>Ölkə / Şəhər:</strong> ${data.country_name || ''} (${data.city || ''})</p>
-                    <p><strong>ISP:</strong> ${data.org || 'Bilinmir'}</p>
-                `;
-            }
-        })
-        .catch(() => {
-            const el = document.getElementById("ip-info");
-            if(el) el.innerText = "IP məlumatları alına bilmədi (AdBlocker engeli ola bilər).";
-        });
-}
+            fetch('https://ipapi.co/json/')
+                .then(res => res.json())
+                .then(data => {
+                    const el = document.getElementById("ip-info");
+                    if(el) {
+                        el.innerHTML = `
+                            <p><strong>Public IP:</strong> <span style="color:#38bdf8">${data.ip || 'Bilinmir'}</span></p>
+                            <p><strong>Ölkə / Şəhər:</strong> ${data.country_name || ''} (${data.city || ''})</p>
+                            <p><strong>ISP:</strong> ${data.org || 'Bilinmir'}</p>
+                        `;
+                    }
+                })
+                .catch(() => {
+                    const el = document.getElementById("ip-info");
+                    if(el) {
+                        el.innerText = "IP məlumatları alına bilmədi (AdBlocker engeli ola bilər).";
+                    }
+                });
+        }
 
         // Güvenli Ping Ölçüm Fonksiyonu (Tarayıcı Uyumlu)
         function measurePing(url, elementId) {
-    const start = performance.now();
-    // Cache'i bypass etmek için query parametresi ekliyoruz
-    const targetUrl = url + '?t=' + new Date().getTime();
+            const start = performance.now();
+            // Cache'i bypass etmek için query parametresi ekliyoruz
+            const targetUrl = url + '?t=' + new Date().getTime();
     
-    fetch(targetUrl, { mode: 'no-cors', cache: 'no-cache' })
-        .then(() => {
-            const duration = Math.round(performance.now() - start);
-            const el = document.getElementById(elementId);
-            if(el) el.innerText = duration + " ms";
-        })
-        .catch(() => {
-            const el = document.getElementById(elementId);
-            if(el) el.innerText = "Timeout / Error";
-        });
-}
+            fetch(targetUrl, { mode: 'no-cors', cache: 'no-cache' })
+                .then(() => {
+                    const duration = Math.round(performance.now() - start);
+                    const el = document.getElementById(elementId);
+                    if(el) el.innerText = duration + " ms";
+                })
+                .catch(() => {
+                    const el = document.getElementById(elementId);
+                    if(el) el.innerText = "Timeout / Error";
+                });
+        }
 
         function checkAllPings() {
-    // Ham IP yerine HTTPS destekli gerçek endpoint'ler kullanıyoruz:
-    measurePing('https://dns.google/resolve', 'ping-google');
-    measurePing('https://1.1.1.1/cdn-cgi/trace', 'ping-cf');
-    measurePing('https://tryhackme.com/favicon.ico', 'ping-thm');
-}
+            // Ham IP yerine HTTPS destekli gerçek endpoint'ler kullanıyoruz:
+            measurePing('https://dns.google/resolve', 'ping-google');
+            measurePing('https://1.1.1.1/cdn-cgi/trace', 'ping-cf');
+            measurePing('https://tryhackme.com/favicon.ico', 'ping-thm');
+        }
 
         function loadSystemInfo() {
-    const el = document.getElementById("sys-info");
-    if(el) {
-        el.innerHTML = `
-            <p><strong>Ekran Ölçüsü:</strong> ${window.screen.width}x${window.screen.height}</p>
-            <p><strong>CPU Nüvə Sayı:</strong> ${navigator.hardwareConcurrency || 'Bilinmir'}</p>
-            <p><strong>RAM Yaddaş:</strong> ${navigator.deviceMemory ? navigator.deviceMemory + ' GB (Təxmini)' : 'Bilinmir'}</p>
-        `;
-    }
-}
+            const el = document.getElementById("sys-info");
+            if(el) {
+                el.innerHTML = `
+                    <p><strong>Ekran Ölçüsü:</strong> ${window.screen.width}x${window.screen.height}</p>
+                    <p><strong>CPU Nüvə Sayı:</strong> ${navigator.hardwareConcurrency || 'Bilinmir'}</p>
+                    <p><strong>RAM Yaddaş:</strong> ${navigator.deviceMemory ? navigator.deviceMemory + ' GB (Təxmini)' : 'Bilinmir'}</p>
+                `;
+            }
+        }
 
         // Sayfa yüklendiğinde hepsini başlat
         window.addEventListener("DOMContentLoaded", () => {
