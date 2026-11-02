@@ -16,7 +16,7 @@ async function generateHash() {
     output.value = hashHex;
 }
 
-// 2. Render WebSocket Bağlantısı (24/7 Real Backend)
+// Render WebSocket bağlantısı
 const socket = new WebSocket("wss://rat-terminal-backend.onrender.com/ws");
 
 socket.onopen = () => {
@@ -41,7 +41,6 @@ socket.onerror = (error) => {
     console.error("WebSocket Error: ", error);
 };
 
-// 3. Enter Düyməsi Hadisəsi
 document.addEventListener("DOMContentLoaded", () => {
     const cliInput = document.getElementById("cli-input");
     
@@ -58,15 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// 4. Əmrlərin Render Backend-ə Göndərilməsi
 function processCommand(cmd) {
     const history = document.getElementById("output-history");
     const terminalBody = document.getElementById("terminal-body");
-    
-    const cmdLine = document.createElement("div");
-    cmdLine.className = "output-line";
-    cmdLine.innerHTML = `<span class="prompt">rat@hub:<span class="prompt-path">~</span>$</span> ${cmd}`;
-    history.appendChild(cmdLine);
 
     const cleanCmd = cmd.trim();
 
@@ -75,13 +68,13 @@ function processCommand(cmd) {
         return;
     }
 
-    // Əmri Render-dəki canlı Python backend-ə ötürürük
+    // Komutu doğrudan arka plandaki PTY bash sürecine gönderiyoruz
     if (socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify({ command: cleanCmd }));
     } else {
         const errLine = document.createElement("div");
         errLine.className = "output-line text-red";
-        errLine.innerText = "[!] Backend bağlantısı hazır deyil və ya qoptu.";
+        errLine.innerText = "[!] Backend bağlantısı henüz hazır değil veya koptu.";
         history.appendChild(errLine);
     }
 
