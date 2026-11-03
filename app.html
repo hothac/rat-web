@@ -19,19 +19,23 @@
                 <h2>RAT HUB LOGIN</h2>
             </div>
             <p>Terminala daxil olmaq üçün kimliyinizi təsdiqləyin.</p>
-            <div class="input-group">
-                <i class="fas fa-user"></i>
-                <input type="text" id="login-username" placeholder="İstifadəçi adı" autocomplete="off">
-            </div>
-            <div class="input-group">
-                <i class="fas fa-lock"></i>
-                <input type="password" id="login-password" placeholder="Şifrə">
-            </div>
-            <!-- id="login-btn" əlavə olundu -->
-            <button type="button" id="login-btn">Daxil Ol</button>
+            
+            <form onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="login-username" placeholder="İstifadəçi adı" autocomplete="off" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="login-password" placeholder="Şifrə" required>
+                </div>
+                <button type="submit" id="login-btn">Daxil Ol</button>
+            </form>
+            
             <p id="login-error" class="error-msg"></p>
         </div>
     </div>
+
 
     <!-- TERMINAL PƏNCƏRƏSİ -->
     <div id="terminal-container" class="terminal-window">

@@ -2,7 +2,9 @@
 const AUTH_USER = "rat";
 const AUTH_PASS = "@@@@stfu@@@@42";
 
-function checkAuth() {
+function handleLogin(event) {
+    if (event) event.preventDefault(); // Səhifənin yenilənməsinin qarşısını alırıq
+
     const userInp = document.getElementById("login-username");
     const passInp = document.getElementById("login-password");
     const errorEl = document.getElementById("login-error");
