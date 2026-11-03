@@ -16,6 +16,7 @@ async function generateHash() {
     output.value = hashHex;
 }
 
+// Render WebSocket bağlantısı
 const socket = new WebSocket("wss://rat-terminal-backend.onrender.com/ws");
 
 socket.onopen = () => {
@@ -26,6 +27,7 @@ socket.onmessage = (event) => {
     const history = document.getElementById("output-history");
     const terminalBody = document.getElementById("terminal-body");
 
+    // Arxa fondan gelen neticeni ekrana yazdiririq
     const resLine = document.createElement("div");
     resLine.className = "output-line";
     resLine.innerText = event.data;
@@ -40,16 +42,18 @@ socket.onerror = (error) => {
     console.error("WebSocket Error: ", error);
 };
 
+// Enter duymesine basildiqda form re-load olmasin ve komanda gonderilsin
 document.addEventListener("DOMContentLoaded", () => {
     const cliInput = document.getElementById("cli-input");
     
     if (cliInput) {
         cliInput.addEventListener("keydown", function(e) {
             if (e.key === "Enter") {
+                e.preventDefault(); // Sehifenin yenilenmesinin/sifirlanmasinin qarsisini alir
                 const command = this.value.trim();
                 if (command !== "") {
                     processCommand(command);
-                    this.value = "";
+                    this.value = ""; // Inputu temizleyir
                 }
             }
         });
@@ -60,7 +64,7 @@ function processCommand(cmd) {
     const history = document.getElementById("output-history");
     const terminalBody = document.getElementById("terminal-body");
 
-    // Kullanıcının yazdığı komutu ekrana ekle
+    // Daxil edilen komandani ekranda saxlayiriq
     const cmdLine = document.createElement("div");
     cmdLine.className = "output-line";
     cmdLine.innerHTML = `<span class="prompt">rat@hub:<span class="prompt-path">~</span>$</span> ${cmd}`;
@@ -78,7 +82,7 @@ function processCommand(cmd) {
     } else {
         const errLine = document.createElement("div");
         errLine.className = "output-line text-red";
-        errLine.innerText = "[!] Backend bağlantısı hazır değil.";
+        errLine.innerText = "[!] Backend baglantisi hazir deyil.";
         history.appendChild(errLine);
     }
 
