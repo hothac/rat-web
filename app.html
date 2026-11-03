@@ -11,7 +11,7 @@
 </head>
 <body class="terminal-body-page">
 
-    <!-- LOGIN MODAL (Şifrə girilmədən ekranı tam bağlayır) -->
+    <!-- LOGIN MODAL -->
     <div id="login-modal" class="login-overlay">
         <div class="login-box">
             <div class="login-header">
@@ -27,7 +27,8 @@
                 <i class="fas fa-lock"></i>
                 <input type="password" id="login-password" placeholder="Şifrə">
             </div>
-            <button onclick="checkAuth()" id="login-btn">Daxil Ol</button>
+            <!-- id="login-btn" əlavə olundu -->
+            <button type="button" id="login-btn">Daxil Ol</button>
             <p id="login-error" class="error-msg"></p>
         </div>
     </div>

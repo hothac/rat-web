@@ -1,50 +1,37 @@
-// GİRİŞ MƏLUMATLARI (İstədiyin login/şifrəni yaz)
+// GİRİŞ MƏLUMATLARI
 const AUTH_USER = "rat";
 const AUTH_PASS = "@@@@stfu@@@@42";
 
 function checkAuth() {
-    const userInp = document.getElementById("login-username").value.trim();
-    const passInp = document.getElementById("login-password").value.trim();
+    const userInp = document.getElementById("login-username");
+    const passInp = document.getElementById("login-password");
     const errorEl = document.getElementById("login-error");
+    const modal = document.getElementById("login-modal");
 
-    if (userInp === AUTH_USER && passInp === AUTH_PASS) {
-        document.getElementById("login-modal").style.display = "none";
+    if (!userInp || !passInp) return;
+
+    const uValue = userInp.value.trim();
+    const pValue = passInp.value.trim();
+
+    if (uValue === AUTH_USER && pValue === AUTH_PASS) {
+        if (modal) modal.style.display = "none";
         sessionStorage.setItem("authenticated", "true");
-        // Focus-u dərhal terminal inputuna yönəldirik
+        
         const cli = document.getElementById("cli-input");
-        if(cli) cli.focus();
+        if (cli) cli.focus();
     } else {
-        errorEl.innerText = "[!] İstifadəçi adı və ya şifrə yanlışdır!";
+        if (errorEl) {
+            errorEl.innerText = "[!] İstifadəçi adı və ya şifrə yanlışdır!";
+        }
     }
 }
 
-// Səhifə açıldıqda yoxlayırıq
-document.addEventListener("DOMContentLoaded", () => {
-    if (sessionStorage.getItem("authenticated") === "true") {
-        const modal = document.getElementById("login-modal");
-        if (modal) modal.style.display = "none";
-    }
-
-    const passInput = document.getElementById("login-password");
-    if (passInput) {
-        passInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") checkAuth();
-        });
-    }
-});
-
-
-
-
-// 1. Hash Generator Funksiyası
+// Hash Generator Funksiyası
 async function generateHash() {
-    const input = document.getElementById("hash-input").value;
+    const input = document.getElementById("hash-input")?.value;
     const output = document.getElementById("hash-output");
 
-    if (!input) {
-        output.value = "";
-        return;
-    }
+    if (!input || !output) return;
 
     const msgBuffer = new TextEncoder().encode(input);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -54,14 +41,13 @@ async function generateHash() {
     output.value = hashHex;
 }
 
+// WebSocket Bağlantısı
 const socket = new WebSocket("wss://rat-terminal-backend.onrender.com/ws");
 let currentPath = "~";
 
-// Əmrlər tarixçəsi (History) üçün dəyişənlər
 let commandHistory = [];
 let historyIndex = -1;
 
-// Auto-complete (Tab) üçün əsas əmrlər siyahısı
 const availableCommands = [
     "nmap", "gobuster", "sqlmap", "whois", "dig", "nslookup",
     "ping", "curl", "wget", "ls", "cd", "pwd", "clear", "help",
@@ -112,34 +98,55 @@ function updatePromptPath() {
     promptPathElements.forEach(el => el.innerText = currentPath);
 }
 
+// SƏHİFƏ YÜKLƏNDİKDƏ İŞƏ DÜŞƏN HADİSƏLƏR (BİR HİSSƏDƏ YIĞILDI)
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. Session Yoxlanışı
+    if (sessionStorage.getItem("authenticated") === "true") {
+        const modal = document.getElementById("login-modal");
+        if (modal) modal.style.display = "none";
+    }
+
+    // 2. Daxil Ol Düyməsinə Click Hadisəsi
+    const loginBtn = document.getElementById("login-btn");
+    if (loginBtn) {
+        loginBtn.addEventListener("click", checkAuth);
+    }
+
+    // 3. Login Xanalarında Enter Hadisəsi
+    const passInput = document.getElementById("login-password");
+    const userInput = document.getElementById("login-username");
+
+    if (passInput) {
+        passInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") checkAuth();
+        });
+    }
+    if (userInput) {
+        userInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") checkAuth();
+        });
+    }
+
+    // 4. Terminal İdaroetmə Hadisələri (Enter, Oxlar, Tab)
     const cliInput = document.getElementById("cli-input");
-    
     if (cliInput) {
         cliInput.addEventListener("keydown", function(e) {
-            // 1. Enter düyməsi
             if (e.key === "Enter") {
                 e.preventDefault();
                 const command = this.value.trim();
                 if (command !== "") {
-                    // Tarixçəyə əlavə edirik
                     commandHistory.push(command);
                     historyIndex = commandHistory.length;
-                    
                     processCommand(command);
                     this.value = "";
                 }
-            }
-            // 2. Yuxarı Ox (ArrowUp) - Əvvəlki əmr
-            else if (e.key === "ArrowUp") {
+            } else if (e.key === "ArrowUp") {
                 e.preventDefault();
                 if (commandHistory.length > 0 && historyIndex > 0) {
                     historyIndex--;
                     this.value = commandHistory[historyIndex];
                 }
-            }
-            // 3. Aşağı Ox (ArrowDown) - Növbəti əmr
-            else if (e.key === "ArrowDown") {
+            } else if (e.key === "ArrowDown") {
                 e.preventDefault();
                 if (historyIndex < commandHistory.length - 1) {
                     historyIndex++;
@@ -148,9 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     historyIndex = commandHistory.length;
                     this.value = "";
                 }
-            }
-            // 4. Tab düyməsi - Auto-complete
-            else if (e.key === "Tab") {
+            } else if (e.key === "Tab") {
                 e.preventDefault();
                 const currentInput = this.value.trim();
                 if (currentInput !== "") {
@@ -193,5 +198,3 @@ function processCommand(cmd) {
         terminalBody.scrollTop = terminalBody.scrollHeight;
     }
 }
-
-
