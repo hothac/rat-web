@@ -1,3 +1,41 @@
+// GİRİŞ MƏLUMATLARI (İstədiyin login/şifrəni yaz)
+const AUTH_USER = "rat";
+const AUTH_PASS = "@@@@stfu@@@@42";
+
+function checkAuth() {
+    const userInp = document.getElementById("login-username").value.trim();
+    const passInp = document.getElementById("login-password").value.trim();
+    const errorEl = document.getElementById("login-error");
+
+    if (userInp === AUTH_USER && passInp === AUTH_PASS) {
+        document.getElementById("login-modal").style.display = "none";
+        sessionStorage.setItem("authenticated", "true");
+        // Focus-u dərhal terminal inputuna yönəldirik
+        const cli = document.getElementById("cli-input");
+        if(cli) cli.focus();
+    } else {
+        errorEl.innerText = "[!] İstifadəçi adı və ya şifrə yanlışdır!";
+    }
+}
+
+// Səhifə açıldıqda yoxlayırıq
+document.addEventListener("DOMContentLoaded", () => {
+    if (sessionStorage.getItem("authenticated") === "true") {
+        const modal = document.getElementById("login-modal");
+        if (modal) modal.style.display = "none";
+    }
+
+    const passInput = document.getElementById("login-password");
+    if (passInput) {
+        passInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") checkAuth();
+        });
+    }
+});
+
+
+
+
 // 1. Hash Generator Funksiyası
 async function generateHash() {
     const input = document.getElementById("hash-input").value;
@@ -157,35 +195,3 @@ function processCommand(cmd) {
 }
 
 
-// GİRİŞ MƏLUMATLARI (İstədiyin kimi dəyişə bilərsən)
-const AUTH_USER = "rat";
-const AUTH_PASS = "@@@@stfu@@@@42";
-
-function checkAuth() {
-    const userInp = document.getElementById("login-username").value.trim();
-    const passInp = document.getElementById("login-password").value.trim();
-    const errorEl = document.getElementById("login-error");
-
-    if (userInp === AUTH_USER && passInp === AUTH_PASS) {
-        document.getElementById("login-modal").style.display = "none";
-        sessionStorage.setItem("authenticated", "true");
-    } else {
-        errorEl.innerText = "[!] İstifadəçi adı və ya şifrə yanlışdır!";
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    // Əgər həmin sessiyada artıq login olunubsa modal göstərilmir
-    if (sessionStorage.getItem("authenticated") === "true") {
-        const modal = document.getElementById("login-modal");
-        if (modal) modal.style.display = "none";
-    }
-
-    // Şifrə xanasında Enter basanda daxil olsun
-    const passInput = document.getElementById("login-password");
-    if (passInput) {
-        passInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") checkAuth();
-        });
-    }
-});

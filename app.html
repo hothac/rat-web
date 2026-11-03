@@ -3,111 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rat Hub - Terminal CLI</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Consolas', 'Courier New', monospace;
-        }
-        body {
-            background-color: #0d1117;
-            color: #38bdf8;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .terminal-container {
-            width: 100%;
-            max-width: 900px;
-            height: 550px;
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .terminal-header {
-            background-color: #21262d;
-            padding: 10px 15px;
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #30363d;
-        }
-        .buttons {
-            display: flex;
-            gap: 8px;
-        }
-        .btn {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        .btn-red { background-color: #ff5f56; }
-        .btn-yellow { background-color: #ffbd2e; }
-        .btn-green { background-color: #27c93f; }
-        .terminal-title {
-            color: #8b949e;
-            font-size: 0.85rem;
-            margin-left: 20px;
-        }
-        .terminal-body {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            color: #c9d1d9;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-        .output-line {
-            margin-bottom: 8px;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-        .command-line {
-            display: flex;
-            align-items: center;
-            margin-top: 5px;
-        }
-        .prompt {
-            color: #2ea043;
-            font-weight: bold;
-            margin-right: 8px;
-            white-space: nowrap;
-        }
-        .prompt-path {
-            color: #38bdf8;
-        }
-        .cmd-input {
-            background: transparent;
-            border: none;
-            color: #f0f6fc;
-            font-family: inherit;
-            font-size: inherit;
-            width: 100%;
-            outline: none;
-        }
-        .text-green { color: #3fb950; }
-        .text-blue { color: #58a6ff; }
-        .text-red { color: #f85149; }
-        .text-yellow { color: #d29922; }
-    </style>
+    <title>RAT HUB - Web Terminal</title>
+    <!-- FontAwesome İkonları -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Əsas CSS Faylı -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <!-- LOGIN MODAL -->
+<body class="terminal-body-page">
+
+    <!-- LOGIN MODAL (Şifrə girilmədən ekranı tam bağlayır) -->
     <div id="login-modal" class="login-overlay">
         <div class="login-box">
-            <h2><i class="fas fa-user-shield"></i> RAT HUB LOGIN</h2>
+            <div class="login-header">
+                <i class="fas fa-user-shield"></i>
+                <h2>RAT HUB LOGIN</h2>
+            </div>
             <p>Terminala daxil olmaq üçün kimliyinizi təsdiqləyin.</p>
             <div class="input-group">
+                <i class="fas fa-user"></i>
                 <input type="text" id="login-username" placeholder="İstifadəçi adı" autocomplete="off">
             </div>
             <div class="input-group">
+                <i class="fas fa-lock"></i>
                 <input type="password" id="login-password" placeholder="Şifrə">
             </div>
             <button onclick="checkAuth()" id="login-btn">Daxil Ol</button>
@@ -115,37 +32,33 @@
         </div>
     </div>
 
-    <!-- TERMINAL BÖLÜMÜ (Şifre girilene kadar gizli kalabilir) -->
+    <!-- TERMINAL PƏNCƏRƏSİ -->
     <div id="terminal-container" class="terminal-window">
-        <!-- Mevcut terminal içerikleriniz -->
-    </div>
-
-
-    <div class="terminal-container" onclick="document.getElementById('cli-input').focus()">
         <div class="terminal-header">
-            <div class="buttons">
-                <div class="btn btn-red"></div>
-                <div class="btn btn-yellow"></div>
-                <div class="btn btn-green"></div>
+            <div class="window-buttons">
+                <span class="btn close"></span>
+                <span class="btn minimize"></span>
+                <span class="btn maximize"></span>
             </div>
-            <div class="terminal-title">rat@cyber-hub:~ (bash)</div>
+            <div class="window-title">rat@cyber-hub:~ (bash)</div>
         </div>
 
-        <div class="terminal-body" id="terminal-body">
-            <div class="output-line text-green">
-██████╗  █████╗ ████████╗    ██╗  ██╗██╗  ██╗██████╗ 
-██╔══██╗██╔══██╗╚══██╔══╝    ██║  ██║██║  ██║██╔══██╗
-██████╔╝███████║   ██║       ███████║██║  ██║██████╔╝
-██╔══██╗██╔══██║   ██║       ██╔══██║██║  ██║██╔══██╗
-██║  ██║██║  ██║   ██║       ██║  ██║╚██████╔╝██████╔╝
-╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ 
-            </div>
-            <div class="output-line text-blue">Xoş gəlmisiniz! Köməkçi əmrlər üçün <span class="text-yellow">'help'</span> daxil edin.</div>
+        <div id="terminal-body" class="terminal-content">
+            <pre class="ascii-art">
+██████╗  █████╗ ████████╗    ██╗  ██╗██╗██╗██████╗ 
+██╔══██╗██╔══██╗╚══██╔══╝    ██║  ██║██║██║██╔══██╗
+██████╔╝███████║   ██║       ███████║██║██║██████╔╝
+██╔══██╗██╔══██║   ██║       ██╔══██║██║██║██╔══██╗
+██║  ██║██║  ██║   ██║       ██║  ██║██║██║██████╔╝
+╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝       ╚═╝  ╚═╝╚═╝╚═╝╚═════╝ 
+            </pre>
+            <p class="welcome-msg">Xoş gəlmisiniz! Köməkçi əmrlər üçün <span class="highlight">'help'</span> daxil edin.</p>
+            
             <div id="output-history"></div>
 
-            <div class="command-line">
+            <div class="input-line">
                 <span class="prompt">rat@hub:<span class="prompt-path">~</span>$</span>
-                <input type="text" id="cli-input" class="cmd-input" autofocus autocomplete="off" spellcheck="false" onkeydown="if(event.key === 'Enter') { processCommand(this.value); this.value = ''; }">
+                <input type="text" id="cli-input" autofocus autocomplete="off" spellcheck="false">
             </div>
         </div>
     </div>
