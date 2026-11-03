@@ -27,22 +27,31 @@ socket.onmessage = (event) => {
     const history = document.getElementById("output-history");
     const terminalBody = document.getElementById("terminal-body");
 
+    let rawText = event.data;
+    let textToDisplay = "";
+
+    // Backend-den gelen JSON-u parse edirik
     try {
-        const response = JSON.parse(event.data);
+        const response = JSON.parse(rawText);
         
         if (response.type === "cwd") {
             currentPath = response.pwd;
             updatePromptPath();
-        } else if (response.output) {
-            const resLine = document.createElement("div");
-            resLine.className = "output-line";
-            resLine.innerText = response.output;
-            history.appendChild(resLine);
+            textToDisplay = response.output || "";
+        } else if (response.output !== undefined) {
+            textToDisplay = response.output;
+        } else {
+            textToDisplay = rawText;
         }
     } catch (e) {
+        textToDisplay = rawText;
+    }
+
+    // Eger gosterilecek metn varsa ekrana yazdiririq
+    if (textToDisplay) {
         const resLine = document.createElement("div");
         resLine.className = "output-line";
-        resLine.innerText = event.data;
+        resLine.innerText = textToDisplay;
         history.appendChild(resLine);
     }
 
@@ -52,10 +61,8 @@ socket.onmessage = (event) => {
 };
 
 function updatePromptPath() {
-    const promptPathElement = document.querySelector(".prompt-path");
-    if (promptPathElement) {
-        promptPathElement.innerText = currentPath;
-    }
+    const promptPathElements = document.querySelectorAll(".prompt-path");
+    promptPathElements.forEach(el => el.innerText = currentPath);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -79,6 +86,7 @@ function processCommand(cmd) {
     const history = document.getElementById("output-history");
     const terminalBody = document.getElementById("terminal-body");
 
+    // Ekrana prompt ve yazilan emri elave edirik
     const cmdLine = document.createElement("div");
     cmdLine.className = "output-line";
     cmdLine.innerHTML = `<span class="prompt">rat@hub:<span class="prompt-path">${currentPath}</span>$</span> ${cmd}`;
