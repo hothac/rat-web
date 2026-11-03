@@ -16,7 +16,6 @@ async function generateHash() {
     output.value = hashHex;
 }
 
-// Render WebSocket bağlantısı
 const socket = new WebSocket("wss://rat-terminal-backend.onrender.com/ws");
 
 socket.onopen = () => {
@@ -61,6 +60,12 @@ function processCommand(cmd) {
     const history = document.getElementById("output-history");
     const terminalBody = document.getElementById("terminal-body");
 
+    // Kullanıcının yazdığı komutu ekrana ekle
+    const cmdLine = document.createElement("div");
+    cmdLine.className = "output-line";
+    cmdLine.innerHTML = `<span class="prompt">rat@hub:<span class="prompt-path">~</span>$</span> ${cmd}`;
+    history.appendChild(cmdLine);
+
     const cleanCmd = cmd.trim();
 
     if (cleanCmd.toLowerCase() === 'clear') {
@@ -68,13 +73,12 @@ function processCommand(cmd) {
         return;
     }
 
-    // Komutu doğrudan arka plandaki PTY bash sürecine gönderiyoruz
     if (socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify({ command: cleanCmd }));
     } else {
         const errLine = document.createElement("div");
         errLine.className = "output-line text-red";
-        errLine.innerText = "[!] Backend bağlantısı henüz hazır değil veya koptu.";
+        errLine.innerText = "[!] Backend bağlantısı hazır değil.";
         history.appendChild(errLine);
     }
 
