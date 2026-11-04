@@ -351,3 +351,149 @@ textarea { width: 100%; height: 100px; background: #090d16; border: 1px solid #3
     font-size: 0.85rem !important;
     font-weight: bold;
 }
+
+/* ==========================================
+   TERMINAL PƏNCƏRƏSİ VƏ INPUT DİZAYNI
+   ========================================== */
+.terminal-body-page {
+    background-color: #0b0f19;
+    margin: 0;
+    padding: 20px;
+    font-family: 'Fira Code', Consolas, Monaco, 'Courier New', monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.terminal-window {
+    width: 90%;
+    max-width: 950px;
+    height: 80vh;
+    min-height: 550px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(16, 185, 129, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.terminal-header {
+    background: #161b22;
+    padding: 12px 16px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.window-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.window-buttons .btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.window-buttons .close { background: #ff5f56; }
+.window-buttons .minimize { background: #ffbd2e; }
+.window-buttons .maximize { background: #27c93f; }
+
+.window-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #8b949e;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.terminal-content {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+    color: #c9d1d9;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.ascii-art {
+    color: #10b981 !important;
+    font-family: 'Fira Code', monospace !important;
+    font-size: 0.75rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 15px !important;
+    white-space: pre !important;
+    font-weight: bold !important;
+}
+
+.welcome-msg {
+    color: #58a6ff;
+    margin-bottom: 15px;
+}
+
+.welcome-msg .highlight {
+    color: #d2a8ff;
+    font-weight: bold;
+}
+
+.output-line {
+    margin-bottom: 6px;
+    word-break: break-all;
+    white-space: pre-wrap;
+}
+
+.input-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.prompt {
+    color: #10b981;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.prompt-path {
+    color: #58a6ff;
+}
+
+/* INPUT XANASININ ŞƏFFAFLAŞDIRILMASI */
+#cli-input {
+    flex: 1;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    color: #00ff66 !important;
+    font-family: inherit !important;
+    font-size: 0.95rem !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+/* LOGIN OVERLAY */
+.login-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(11, 15, 25, 0.96);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+}
+
+.login-overlay.hidden {
+    display: none !important;
+}

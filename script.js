@@ -1,5 +1,5 @@
 // ==========================================
-// 1. GİRİŞ VƏ PAROL YOXLANIŞI
+// 1. GİRİŞ VƏ PAROL YOXLANIŞI (INDEX & APP)
 // ==========================================
 const AUTH_USER = "rat";
 const AUTH_PASS = "@@@@stfu@@@@42";
@@ -11,6 +11,7 @@ function handleLogin(event) {
     const passInp = document.getElementById("login-password");
     const errorEl = document.getElementById("login-error");
     const modal = document.getElementById("login-modal");
+    const panelCard = document.getElementById("panel-card");
 
     if (!userInp || !passInp) return;
 
@@ -18,12 +19,16 @@ function handleLogin(event) {
     const pValue = passInp.value.trim();
 
     if (uValue === AUTH_USER && pValue === AUTH_PASS) {
+        sessionStorage.setItem("authenticated", "true");
+
         if (modal) {
             modal.classList.add("hidden");
             modal.style.setProperty("display", "none", "important");
         }
-        sessionStorage.setItem("authenticated", "true");
-        
+        if (panelCard) {
+            panelCard.classList.remove("hidden");
+        }
+
         const cli = document.getElementById("cli-input");
         if (cli) cli.focus();
     } else {
@@ -32,11 +37,10 @@ function handleLogin(event) {
         }
     }
 }
-// Qlobal çağırışlar üçün bağlayırıq
 window.handleLogin = handleLogin;
 window.checkAuth = handleLogin;
 
-// index.html Sekmə Keçidləri Funksiyası
+// index.html Sekmə Keçidləri
 window.switchTab = function(tabName) {
     const tabs = document.querySelectorAll(".tab-content");
     const btns = document.querySelectorAll(".menu-btn");
@@ -70,7 +74,7 @@ window.generateHash = generateHash;
 
 
 // ==========================================
-// 2. WEBSOCKET VƏ TERMINAL DEYİŞƏNLƏRİ
+// 2. TERMINAL VƏ WEBSOCKET MƏNTİQİ
 // ==========================================
 let socket = null;
 let currentPath = "~";
@@ -83,7 +87,6 @@ const availableCommands = [
     "cat", "nano", "vim", "git", "ifconfig", "netstat"
 ];
 
-// Yalnız terminal olan səhifədə (app.html) WebSocket-i başladırıq
 if (document.getElementById("cli-input") || document.getElementById("output-history")) {
     socket = new WebSocket("wss://rat-terminal-backend.onrender.com/ws");
 
@@ -100,7 +103,6 @@ if (document.getElementById("cli-input") || document.getElementById("output-hist
 
         try {
             const response = JSON.parse(rawText);
-            
             if (response.type === "cwd") {
                 currentPath = response.pwd;
                 updatePromptPath();
@@ -168,25 +170,26 @@ function processCommand(cmd) {
 
 
 // ==========================================
-// 3. SƏHİFƏ YÜKLƏNDİKDƏ İŞƏ DÜŞƏN HADİSƏLƏR
+// 3. SƏHİFƏ YÜKLƏNDİKDƏ İŞƏ DÜŞƏN MƏNTİQ
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Session Yoxlanışı (Əvvəl daxil olunubsa modalı gizlədirik)
     if (sessionStorage.getItem("authenticated") === "true") {
         const modal = document.getElementById("login-modal");
+        const panelCard = document.getElementById("panel-card");
         if (modal) {
             modal.classList.add("hidden");
             modal.style.setProperty("display", "none", "important");
         }
+        if (panelCard) {
+            panelCard.classList.remove("hidden");
+        }
     }
 
-    // 2. Daxil Ol Düyməsinə Click Hadisəsi
     const loginBtn = document.getElementById("login-btn");
     if (loginBtn) {
         loginBtn.addEventListener("click", handleLogin);
     }
 
-    // 3. Login Xanalarında Enter Hadisəsi
     const passInput = document.getElementById("login-password");
     const userInput = document.getElementById("login-username");
 
@@ -201,44 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // 4. Terminal İdarəetmə Hadisələri (Enter, Oxlar, Tab)
     const cliInput = document.getElementById("cli-input");
     if (cliInput) {
         cliInput.addEventListener("keydown", function(e) {
-            if (e.key === "Enter") {
-                e.preventDefault();
-                const command = this.value.trim();
-                if (command !== "") {
-                    commandHistory.push(command);
-                    historyIndex = commandHistory.length;
-                    processCommand(command);
-                    this.value = "";
-                }
-            } else if (e.key === "ArrowUp") {
-                e.preventDefault();
-                if (commandHistory.length > 0 && historyIndex > 0) {
-                    historyIndex--;
-                    this.value = commandHistory[historyIndex];
-                }
-            } else if (e.key === "ArrowDown") {
-                e.preventDefault();
-                if (historyIndex < commandHistory.length - 1) {
-                    historyIndex++;
-                    this.value = commandHistory[historyIndex];
-                } else {
-                    historyIndex = commandHistory.length;
-                    this.value = "";
-                }
-            } else if (e.key === "Tab") {
-                e.preventDefault();
-                const currentInput = this.value.trim();
-                if (currentInput !== "") {
-                    const matches = availableCommands.filter(cmd => cmd.startsWith(currentInput));
-                    if (matches.length === 1) {
-                        this.value = matches[0] + " ";
-                    }
-                }
-            }
-        });
-    }
-});
+            if (e.key === "Enter

@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RAT HUB - Web Terminal</title>
-    <!-- FontAwesome İkonları -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Əsas CSS Faylı -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="terminal-body-page">
@@ -19,23 +17,18 @@
                 <h2>RAT HUB LOGIN</h2>
             </div>
             <p>Terminala daxil olmaq üçün kimliyinizi təsdiqləyin.</p>
-            
-            <form onsubmit="handleLogin(event)">
-                <div class="input-group">
-                    <i class="fas fa-user"></i>
-                    <input type="text" id="login-username" placeholder="İstifadəçi adı" autocomplete="off" required>
-                </div>
-                <div class="input-group">
-                    <i class="fas fa-lock"></i>
-                    <input type="password" id="login-password" placeholder="Şifrə" required>
-                </div>
-                <button type="button" id="login-btn" onclick="handleLogin()">Daxil Ol</button>
-            </form>
-            
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="login-username" placeholder="İstifadəçi adı" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="login-password" placeholder="Şifrə">
+            </div>
+            <button type="button" id="login-btn" onclick="handleLogin()">Daxil Ol</button>
             <p id="login-error" class="error-msg"></p>
         </div>
     </div>
-
 
     <!-- TERMINAL PƏNCƏRƏSİ -->
     <div id="terminal-container" class="terminal-window">
