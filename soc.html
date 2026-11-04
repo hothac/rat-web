@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAT HUB - SOC & Log Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="soc.css">
+</head>
+<body class="soc-body">
+
+    <!-- SOC LOGIN MODAL -->
+    <div id="soc-login-modal" class="soc-login-overlay">
+        <div class="soc-login-box">
+            <div class="soc-login-header">
+                <i class="fas fa-shield-halved"></i>
+                <h2>SOC ANALYZER LOGIN</h2>
+            </div>
+            <p>SOC & Defense moduluna daxil olmaq üçün kimliyinizi təsdiqləyin.</p>
+            
+            <form onsubmit="handleSocLogin(event)">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="soc-login-username" placeholder="İstifadəçi adı" autocomplete="off" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="soc-login-password" placeholder="Şifrə" required>
+                </div>
+                <button type="submit" id="soc-login-btn">Daxil Ol</button>
+            </form>
+
+            <p id="soc-login-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <!-- MAIN SOC DASHBOARD -->
+    <div id="soc-dashboard" class="soc-container hidden">
+        
+        <!-- HEADER -->
+        <header class="soc-header">
+            <div class="header-title">
+                <i class="fas fa-shield-halved"></i>
+                <span>SOC & Threat Intelligence Dashboard</span>
+            </div>
+            <div class="header-status">
+                <span class="status-indicator active"></span>
+                <span class="status-text">MONITORING ACTIVE</span>
+            </div>
+        </header>
+
+        <!-- STATS METRICS -->
+        <section class="soc-metrics">
+            <div class="metric-card blue">
+                <i class="fas fa-list-check"></i>
+                <div class="metric-info">
+                    <span class="metric-value" id="total-logs">0</span>
+                    <span class="metric-label">Ümumi Loglar</span>
+                </div>
+            </div>
+            <div class="metric-card green">
+                <i class="fas fa-check-circle"></i>
+                <div class="metric-info">
+                    <span class="metric-value" id="normal-events">0</span>
+                    <span class="metric-label">Normal Hadisələr</span>
+                </div>
+            </div>
+            <div class="metric-card red">
+                <i class="fas fa-triangle-exclamation"></i>
+                <div class="metric-info">
+                    <span class="metric-value" id="threat-alerts">0</span>
+                    <span class="metric-label">Şübhəli Xəbərdarlıqlar</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN LAYOUT -->
+        <main class="soc-main-grid">
+            
+            <!-- LEFT PANEL: LOG ANALYSIS CONTROLS -->
+            <section class="soc-card controls-card">
+                <h3><i class="fas fa-filter"></i> Log Analyzer & Parser</h3>
+                
+                <form id="soc-analyze-form" onsubmit="analyzeLogEntry(event)">
+                    <div class="soc-input-group">
+                        <label for="soc-log-input">Log Mətni və ya IP Daxil Edin:</label>
+                        <textarea id="soc-log-input" rows="4" placeholder="Məsələn: 192.168.1.50 - Failed password for root from 45.33.32.156 port 22 ssh2" required></textarea>
+                    </div>
+
+                    <button type="submit" id="analyze-btn" class="analyze-btn">
+                        <i class="fas fa-magnifying-glass"></i> Logu Təhlil Et
+                    </button>
+                </form>
+
+                <div class="quick-actions">
+                    <h4>Nümunə Test Logları:</h4>
+                    <button type="button" class="sample-btn" onclick="loadSampleLog('ssh')">SSH Brute-Force</button>
+                    <button type="button" class="sample-btn" onclick="loadSampleLog('web')">Web Access (200 OK)</button>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: REAL-TIME ALERTS -->
+            <section class="soc-card alerts-card">
+                <h3><i class="fas fa-bell"></i> Live Security Events</h3>
+                <div id="soc-alert-list" class="soc-alert-feed">
+                    <div class="feed-placeholder">Hələ analiz edilmiş log yoxdur.</div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="soc.js"></script>
+</body>
+</html>
