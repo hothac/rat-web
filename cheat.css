@@ -1,0 +1,236 @@
+/* CHEAT-SHEET STYLES */
+body.cheat-body {
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* LOGIN OVERLAY */
+.cheat-login-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(13, 17, 23, 0.96);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+}
+
+.cheat-login-box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 30px;
+    width: 340px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    text-align: center;
+}
+
+.cheat-login-header {
+    color: #58a6ff;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.cheat-login-header i {
+    font-size: 2rem;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.cheat-login-box p {
+    font-size: 0.85rem;
+    color: #8b949e;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b949e;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 10px 10px 36px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #58a6ff;
+    box-sizing: border-box;
+    outline: none;
+}
+
+#cheat-login-btn {
+    width: 100%;
+    padding: 10px;
+    background: #238636;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#cheat-login-btn:hover {
+    background: #2ea043;
+}
+
+.error-msg {
+    color: #f85149;
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+
+/* CONTAINER */
+.cheat-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.cheat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 15px 25px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #58a6ff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-box {
+    position: relative;
+    width: 300px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b949e;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #c9d1d9;
+    outline: none;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.search-box input:focus {
+    border-color: #58a6ff;
+}
+
+/* GRID & CARDS */
+.cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.cheat-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: 0.2s;
+}
+
+.cheat-card:hover {
+    border-color: #58a6ff;
+    box-shadow: 0 4px 12px rgba(88, 166, 255, 0.1);
+}
+
+.cheat-card h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #58a6ff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cheat-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #8b949e;
+}
+
+.code-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-top: 5px;
+}
+
+.code-box code {
+    font-family: 'Fira Code', Consolas, monospace;
+    font-size: 0.8rem;
+    color: #7ee787;
+    word-break: break-all;
+}
+
+.hl {
+    color: #ffa657;
+}
+
+.copy-btn {
+    background: #21262d;
+    border: 1px solid #30363d;
+    color: #c9d1d9;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.2s;
+    flex-shrink: 0;
+    margin-left: 10px;
+}
+
+.copy-btn:hover {
+    background: #30363d;
+    color: #58a6ff;
+}
