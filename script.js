@@ -207,4 +207,40 @@ document.addEventListener("DOMContentLoaded", () => {
     const cliInput = document.getElementById("cli-input");
     if (cliInput) {
         cliInput.addEventListener("keydown", function(e) {
-            if (e.key === "Enter
+            if (e.key === "Enter") {
+                e.preventDefault();
+                const command = this.value.trim();
+                if (command !== "") {
+                    commandHistory.push(command);
+                    historyIndex = commandHistory.length;
+                    processCommand(command);
+                    this.value = "";
+                }
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                if (commandHistory.length > 0 && historyIndex > 0) {
+                    historyIndex--;
+                    this.value = commandHistory[historyIndex];
+                }
+            } else if (e.key === "ArrowDown") {
+                e.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    this.value = commandHistory[historyIndex];
+                } else {
+                    historyIndex = commandHistory.length;
+                    this.value = "";
+                }
+            } else if (e.key === "Tab") {
+                e.preventDefault();
+                const currentInput = this.value.trim();
+                if (currentInput !== "") {
+                    const matches = availableCommands.filter(cmd => cmd.startsWith(currentInput));
+                    if (matches.length === 1) {
+                        this.value = matches[0] + " ";
+                    }
+                }
+            }
+        });
+    }
+});
