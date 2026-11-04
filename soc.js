@@ -1,6 +1,6 @@
 // WIRESHARK ANALYZER - LOGIC
 const SOC_USER = "rat";
-const SOC_PASS = "Admin@123!";
+const SOC_PASS = "@@@@stfu@@@@42";
 
 let packetId = 1;
 let isStreaming = true;
@@ -21,6 +21,9 @@ function handleSocLogin(event) {
         sessionStorage.setItem("soc_authenticated", "true");
         if (modal) modal.classList.add("hidden");
         if (dashboard) dashboard.classList.remove("hidden");
+        
+        // Giriş yapılır yapılmaz paket akışını başlatıyoruz!
+        startPacketStream();
     } else {
         if (errorEl) errorEl.innerText = "[!] İstifadəçi adı və ya şifrə yanlışdır!";
     }
@@ -50,7 +53,10 @@ const sampleInfos = [
 ];
 
 function startPacketStream() {
-    setInterval(() => {
+    // Üst-üste interval düşməməsi üçün yoxlayırıq
+    if (window.packetInterval) clearInterval(window.packetInterval);
+
+    window.packetInterval = setInterval(() => {
         if (!isStreaming) return;
 
         const now = new Date().toISOString().slice(11, 23);
@@ -67,13 +73,12 @@ function startPacketStream() {
 
         appendPacketRow(packet);
 
-        // Maksimum 100 paket saxlayırıq ki, brauzer donmasın
         if (packetsData.length > 100) {
             packetsData.shift();
             const tbody = document.getElementById("packet-table-body");
             if (tbody.firstChild) tbody.removeChild(tbody.firstChild);
         }
-    }, 1200); // Hər 1.2 saniyədə bir yeni paket düşür
+    }, 1200);
 }
 
 function appendPacketRow(pkt) {
