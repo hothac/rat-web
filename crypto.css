@@ -1,0 +1,258 @@
+/* CRYPTO ANALYZER STYLES */
+body.crypto-body {
+    background-color: #0b0f19;
+    color: #c9d1d9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* LOGIN OVERLAY */
+.crypto-login-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(11, 15, 25, 0.96);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+}
+
+.crypto-login-box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 30px;
+    width: 340px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    text-align: center;
+}
+
+.crypto-login-header {
+    color: #58a6ff;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.crypto-login-header i {
+    font-size: 2rem;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.crypto-login-box p {
+    font-size: 0.85rem;
+    color: #8b949e;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b949e;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 10px 10px 36px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #58a6ff;
+    box-sizing: border-box;
+    outline: none;
+}
+
+#crypto-login-btn {
+    width: 100%;
+    padding: 10px;
+    background: #1f6feb;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#crypto-login-btn:hover {
+    background: #388bfd;
+}
+
+.error-msg {
+    color: #f85149;
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+
+/* CONTAINER */
+.crypto-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.crypto-header {
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 15px 25px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.header-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #58a6ff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* GRID & CARDS */
+.crypto-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.crypto-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.crypto-card h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #58a6ff;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.crypto-input-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #8b949e;
+    margin-bottom: 8px;
+}
+
+.password-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+.password-wrapper input {
+    flex: 1;
+    padding: 10px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #7ee787;
+    font-family: monospace;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.password-wrapper input:focus {
+    border-color: #58a6ff;
+}
+
+.gen-pass-btn {
+    background: #21262d;
+    border: 1px solid #30363d;
+    color: #c9d1d9;
+    padding: 0 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.gen-pass-btn:hover {
+    background: #30363d;
+    color: #58a6ff;
+}
+
+/* METRICS */
+.metrics-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 15px;
+}
+
+.metric-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.m-label {
+    color: #8b949e;
+}
+
+.m-val {
+    font-weight: bold;
+    color: #f0f6fc;
+}
+
+/* HARDWARE LIST */
+.hardware-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.hw-item {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hw-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    color: #8b949e;
+}
+
+.hw-info i {
+    color: #58a6ff;
+    font-size: 1.1rem;
+}
+
+.hw-time {
+    font-family: monospace;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #7ee787;
+}

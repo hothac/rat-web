@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAT HUB - Password Entropy & Brute-Force Simulator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="crypto.css">
+</head>
+<body class="crypto-body">
+
+    <!-- LOGIN MODAL -->
+    <div id="crypto-login-modal" class="crypto-login-overlay">
+        <div class="crypto-login-box">
+            <div class="crypto-login-header">
+                <i class="fas fa-key"></i>
+                <h2>CRYPTO ANALYZER LOGIN</h2>
+            </div>
+            <p>Şifrə analiz moduluna daxil olmaq üçün təsdiqləyin.</p>
+            
+            <form onsubmit="handleCryptoLogin(event)">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="crypto-login-username" placeholder="İstifadəçi adı" autocomplete="off" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="crypto-login-password" placeholder="Şifrə" required>
+                </div>
+                <button type="submit" id="crypto-login-btn">Daxil Ol</button>
+            </form>
+
+            <p id="crypto-login-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="crypto-dashboard" class="crypto-container hidden">
+        
+        <!-- HEADER -->
+        <header class="crypto-header">
+            <div class="header-title">
+                <i class="fas fa-shield-keyhole"></i>
+                <span>Password Entropy & Brute-Force Speed Simulator</span>
+            </div>
+        </header>
+
+        <!-- MAIN GRID -->
+        <main class="crypto-grid">
+            
+            <!-- LEFT PANEL: INPUT & METRICS -->
+            <section class="crypto-card input-card">
+                <h3><i class="fas fa-terminal"></i> Target Password Input</h3>
+                
+                <div class="crypto-input-group">
+                    <label for="password-input">Analiz ediləcək şifrəni daxil edin:</label>
+                    <div class="password-wrapper">
+                        <input type="text" id="password-input" placeholder="Məsələn: P@ssw0rd123!..." oninput="analyzePassword()">
+                        <button type="button" class="gen-pass-btn" onclick="generateStrongPassword()" title="Güclü şifrə yarat">
+                            <i class="fas fa-wand-magic-sparkles"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="metrics-box">
+                    <div class="metric-item">
+                        <span class="m-label">Simvol Sayı:</span>
+                        <span class="m-val" id="stat-length">0</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="m-label">Şəffaflıq / Entropiya:</span>
+                        <span class="m-val" id="stat-entropy">0 bits</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="m-label">Təhlükəsizlik Səviyyəsi:</span>
+                        <span class="m-val" id="stat-strength">-</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT PANEL: BRUTE-FORCE TIME ESTIMATION -->
+            <section class="crypto-card results-card">
+                <h3><i class="fas fa-microchip"></i> Hardware Brute-Force Time Estimation</h3>
+                
+                <div class="hardware-list">
+                    <div class="hw-item">
+                        <div class="hw-info">
+                            <i class="fas fa-server"></i>
+                            <span>Standart CPU (Single Core - 10H/s)</span>
+                        </div>
+                        <div class="hw-time" id="time-cpu">-</div>
+                    </div>
+                    
+                    <div class="hw-item">
+                        <div class="hw-info">
+                            <i class="fas fa-desktop"></i>
+                            <span>Güclü Oyun PC (1x RTX 4090 - 100GH/s)</span>
+                        </div>
+                        <div class="hw-time" id="time-gpu">-</div>
+                    </div>
+
+                    <div class="hw-item">
+                        <div class="hw-info">
+                            <i class="fas fa-network-wired"></i>
+                            <span>Enterprise GPU Rig (8x RTX 4090 - 800GH/s)</span>
+                        </div>
+                        <div class="hw-time" id="time-rig">-</div>
+                    </div>
+
+                    <div class="hw-item">
+                        <div class="hw-info">
+                            <i class="fas fa-cloud"></i>
+                            <span>Cloud Cluster (Hashcat Cloud - 10TH/s)</span>
+                        </div>
+                        <div class="hw-time" id="time-cloud">-</div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="crypto.js"></script>
+</body>
+</html>
