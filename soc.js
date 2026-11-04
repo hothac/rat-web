@@ -1,3 +1,4 @@
+
 // SOC & LOG ANALYZER - INDEPENDENT AUTH & PARSER LOGIC
 const SOC_USER = "rat";
 const SOC_PASS = "Admin@123!";
