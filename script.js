@@ -288,3 +288,78 @@ function processCommand(cmd) {
         terminalBody.scrollTop = terminalBody.scrollHeight;
     }
 }
+
+
+
+
+// Səhifə yüklənəndə GeoIP və Sistem məlumatlarını çəkmək
+document.addEventListener("DOMContentLoaded", () => {
+    loadGeoIPInfo();
+    loadSystemInfo();
+    checkAllPings();
+});
+
+// 1. GeoIP və IP Məlumatı
+async function loadGeoIPInfo() {
+    const ipDiv = document.getElementById("ip-info");
+    if (!ipDiv) return;
+    
+    try {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        ipDiv.innerHTML = `
+            <b>IP Ünvan:</b> ${data.ip || 'Naməlum'}<br>
+            <b>Ölkə:</b> ${data.country_name || 'Naməlum'} (${data.country_code})<br>
+            <b>Şəhər:</b> ${data.city || 'Naməlum'}<br>
+            <b>Provayder (ISP):</b> ${data.org || 'Naməlum'}
+        `;
+    } catch (error) {
+        ipDiv.innerHTML = "<span style='color: #f85149;'>[!] IP məlumatlarını çəkmək mümkün olmadı (API limit və ya şəbəkə xətası).</span>";
+    }
+}
+
+// 2. Sistem və Brauzer Məlumatı
+function loadSystemInfo() {
+    const sysDiv = document.getElementById("sys-info");
+    if (!sysDiv) return;
+
+    const ua = navigator.userAgent;
+    const platform = navigator.platform || "Naməlum";
+    const cores = navigator.hardwareConcurrency || "Təyin olunmayıb";
+    const memory = navigator.deviceMemory ? navigator.deviceMemory + " GB+" : "Naməlum";
+    const language = navigator.language || "Naməlum";
+
+    sysDiv.innerHTML = `
+        <b>Əməliyyat Sistemi / Platforma:</b> ${platform}<br>
+        <b>CPU Nüvə Sayı (Logical Cores):</b> ${cores}<br>
+        <b>Təxmini RAM:</b> ${memory}<br>
+        <b>Brauzer Dili:</b> ${language}<br>
+        <b>User-Agent:</b> <span style="font-size: 0.8rem; color: #8b949e;">${ua}</span>
+    `;
+}
+
+// 3. Ping / Latency Simulyasiyası (Fetch vasitəsilə gecikmə ölçmə)
+async function checkAllPings() {
+    setPing("ping-google", "https://www.google.com/favicon.ico");
+    setPing("ping-cf", "https://1.1.1.1/favicon.ico");
+    setPing("ping-thm", "https://tryhackme.com/favicon.ico");
+}
+
+async function setPing(elementId, url) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    
+    el.innerText = "Ölçülür...";
+    const start = performance.now();
+    try {
+        // mode: 'no-cors' sayəsində xarici favicon-lara sorğu atıb cavab müddətini ölçə bilirik
+        await fetch(url, { mode: 'no-cors', cache: 'no-store' });
+        const end = performance.now();
+        const duration = Math.round(end - start);
+        el.innerText = `${duration} ms`;
+        el.style.color = duration < 150 ? "#3fb950" : "#d29922";
+    } catch (err) {
+        el.innerText = "Timeout / Blok";
+        el.style.color = "#f85149";
+    }
+}
