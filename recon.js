@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// REAL DNS VƏ WHOIS / IP SORĞULARI
+// REAL DNS AND WHOIS / IP LOOKUP
 async function startReconScan(event) {
     if (event && event.preventDefault) event.preventDefault();
 
@@ -47,52 +47,60 @@ async function startReconScan(event) {
     if (!targetInput || !targetInput.value) return;
 
     let target = targetInput.value.trim().toLowerCase();
-    // URL daxil edilibsə (https:// və s.), yalnız domen adını təmizləyirik
     target = target.replace(/^(?:https?:\/\/)?(?:www\.)?/, '').split('/')[0];
 
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Axtarılır...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Tarayır...';
 
-    // Ekranı sıfırlayırıq
     document.getElementById("res-target-summary").innerText = "Yüklənir...";
     document.getElementById("res-ports").innerText = "Yüklənir...";
     document.getElementById("res-subdomains").innerText = "Yüklənir...";
 
     appendLog(`[+] Real sorğu başladı: ${target}`, "success");
 
+    let resolvedIp = target;
+
+    // 1. Google DNS A Record
     try {
-        // 1. Google DNS-over-HTTPS vasitəsilə A rekordunu (IP) tapırıq
         appendLog(`[*] DNS (A Record) sorğulanır...`, "info");
         const dnsResp = await fetch(`https://dns.google/resolve?name=${target}&type=A`);
         const dnsData = await dnsResp.json();
 
-        let resolvedIp = "";
         if (dnsData.Answer && dnsData.Answer.length > 0) {
-            resolvedIp = dnsData.Answer[dnsData.Answer.length - 1].data;
+            const aRecord = dnsData.Answer.find(item => item.type === 1) || dnsData.Answer[dnsData.Answer.length - 1];
+            resolvedIp = aRecord.data;
             appendLog(`[✔] IP Ünvanı tapıldı: ${resolvedIp}`, "success");
         } else {
-            // Əgər daxil edilən heç domen deyil, birbaşa IP-dir sə
-            resolvedIp = target;
-            appendLog(`[*] Birbaşa IP sorğusu icra edilir: ${resolvedIp}`, "info");
+            appendLog(`[*] Birbaşa IP və ya A rekordu tapılmadı: ${target}`, "info");
         }
+    } catch (e) {
+        appendLog(`[!] DNS A sorğusunda xəta baş verdi.`, "error");
+    }
 
-        // 2. IP haqqında WHOIS / Geolocation məlumatlarını alırıq (ipapi.co API)
-        appendLog(`[*] WHOIS və İstehsalçı/Geo məlumatları çəkilir...`, "info");
-        const ipResp = await fetch(`https://ipapi.co/${resolvedIp}/json/`);
+    // 2. WHOIS / Geolocation (ipwho.is API)
+    try {
+        appendLog(`[*] WHOIS və Provayder məlumatları çəkilir...`, "info");
+        const ipResp = await fetch(`https://ipwho.is/${resolvedIp}`);
         const ipData = await ipResp.json();
 
-        if (ipData && !ipData.error) {
+        if (ipData && ipData.success !== false) {
             document.getElementById("res-target-summary").innerText = 
-                `Domain/Host: ${target}\nIP: ${ipData.ip || resolvedIp}\nÖlkə: ${ipData.country_name || 'Bilinmir'}\nŞəhər: ${ipData.city || 'Bilinmir'}`;
+                `Domain/Host: ${target}\nIP: ${ipData.ip || resolvedIp}\nÖlkə: ${ipData.country || 'Bilinmir'}\nŞəhər: ${ipData.city || 'Bilinmir'}`;
 
             document.getElementById("res-ports").innerText = 
-                `ASN: ${ipData.asn || 'N/A'}\nProvayder (ISP): ${ipData.org || ipData.network || 'Bilinmir'}\nOrg: ${ipData.version || 'IPv4'}`;
+                `ASN: ${ipData.connection?.asn || 'N/A'}\nProvayder (ISP): ${ipData.connection?.isp || ipData.connection?.org || 'Bilinmir'}\nDomain: ${ipData.domain || target}`;
         } else {
             document.getElementById("res-target-summary").innerText = `Host: ${target}\nIP: ${resolvedIp}`;
             document.getElementById("res-ports").innerText = `Məlumat tapılmadı.`;
         }
+    } catch (e) {
+        document.getElementById("res-target-summary").innerText = `Host: ${target}\nIP: ${resolvedIp}`;
+        document.getElementById("res-ports").innerText = `WHOIS servisinə bağlanıla bilmədi.`;
+        appendLog(`[!] WHOIS sorğusunda xəta baş verdi.`, "error");
+    }
 
-        // 3. Domenin Mail (MX) rekordlarını çəkirik
+    // 3. Google DNS MX Record
+    try {
         appendLog(`[*] DNS MX (Mail Server) rekordları yoxlanılır...`, "info");
         const mxResp = await fetch(`https://dns.google/resolve?name=${target}&type=MX`);
         const mxData = await mxResp.json();
@@ -103,18 +111,16 @@ async function startReconScan(event) {
             appendLog(`[✔] ${mxData.Answer.length} ədəd Mail server tapıldı.`, "success");
         } else {
             document.getElementById("res-subdomains").innerText = "MX rekordları tapılmadı.";
-            appendLog(`[-] MX rekordu yoxdur.`, "warn");
+            appendLog(`[-] MX rekordu yoxdur.`, "info");
         }
-
-        appendLog(`[✔] Bütün real məlumatlar uğurla gətirildi!`, "success");
-
-    } catch (err) {
-        appendLog(`[!] Xəta baş verdi: Sorğu tamamlanamadı.`, "error");
-        console.error(err);
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-play"></i> Taramanı Başlat';
+    } catch (e) {
+        document.getElementById("res-subdomains").innerText = "MX sorğusu uğursuz oldu.";
+        appendLog(`[!] MX sorğusunda xəta baş verdi.`, "error");
     }
+
+    appendLog(`[✔] Tarama prosesi tamamlandı!`, "success");
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-play"></i> Taramanı Başlat';
 }
 window.startReconScan = startReconScan;
 
