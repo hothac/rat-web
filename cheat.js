@@ -1,4 +1,4 @@
-// CHEAT-SHEET LOGIC
+// CHEAT-SHEET LOGIC - BULLETPROOF COPY
 const CHEAT_USER = "rat";
 const CHEAT_PASS = "Admin@123!";
 
@@ -32,20 +32,35 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Tək kliklə kodu kopyalamaq
+// 100% İŞLƏK KOPYALAMA MEXANİZMİ (Fallback üsulu)
 function copyCode(btn) {
     const codeEl = btn.parentElement.querySelector("code");
+    
+    // Mətni düzgün oxumaq üçün içindəki HTML teqlərini təmizləyirik
     const textToCopy = codeEl.innerText;
 
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        const originalHTML = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check" style="color: #3fb950;"></i>';
-        setTimeout(() => {
-            btn.innerHTML = originalHTML;
-        }, 1500);
-    }).catch(err => {
+    // Müvəqqəti textareas yaradıb mətni ora atırıq
+    const textarea = document.createElement("textarea");
+    textarea.value = textToCopy;
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check" style="color: #3fb950;"></i>';
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+            }, 1500);
+        } else {
+            console.error("Kopyalama uğursuz oldu.");
+        }
+    } catch (err) {
         console.error("Kopyalama xətası: ", err);
-    });
+    }
+
+    document.body.removeChild(textarea);
 }
 window.copyCode = copyCode;
 
