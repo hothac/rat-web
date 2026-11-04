@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAT HUB - Recon & Target Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="recon.css">
+</head>
+<body class="recon-body">
+
+    <!-- RECON INDEPENDENT LOGIN MODAL -->
+    <div id="recon-login-modal" class="recon-login-overlay">
+        <div class="recon-login-box">
+            <div class="recon-login-header">
+                <i class="fas fa-radar"></i>
+                <h2>RECON HUB LOGIN</h2>
+            </div>
+            <p>Recon Hub moduluna daxil olmaq üçün kimliyinizi təsdiqləyin.</p>
+            
+            <form onsubmit="handleReconLogin(event)">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="recon-login-username" placeholder="İstifadəçi adı" autocomplete="off" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="recon-login-password" placeholder="Şifrə" required>
+                </div>
+                <button type="submit" id="recon-login-btn">Daxil Ol</button>
+            </form>
+
+            <p id="recon-login-error" class="error-msg"></p>
+        </div>
+    </div>
+
+    <!-- MAIN RECON DASHBOARD -->
+    <div id="recon-dashboard" class="recon-container hidden">
+        
+        <!-- HEADER -->
+        <header class="recon-header">
+            <div class="header-title">
+                <i class="fas fa-radar"></i>
+                <span>Automated Recon & Target Hub</span>
+            </div>
+            <div class="header-status">
+                <span class="status-indicator online"></span>
+                <span class="status-text">SYSTEM ONLINE</span>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <main class="recon-main-grid">
+            
+            <!-- LEFT PANEL: CONTROLS -->
+            <section class="recon-card controls-card">
+                <h3><i class="fas fa-crosshairs"></i> Target Input & Options</h3>
+                
+                <form id="recon-scan-form" onsubmit="startReconScan(event)">
+                    <div class="recon-input-group">
+                        <label for="recon-target-input">Target Domain / IP:</label>
+                        <input type="text" id="recon-target-input" placeholder="example.com və ya 192.168.1.1" required autocomplete="off">
+                    </div>
+
+                    <div class="recon-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-portscan" checked> Port Scan (Nmap)
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-subdomain" checked> Subdomain Enum (Gobuster)
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="opt-whois" checked> DNS & Whois Lookup
+                        </label>
+                    </div>
+
+                    <button type="submit" id="start-scan-btn" class="scan-btn">
+                        <i class="fas fa-play"></i> Taramanı Başlat
+                    </button>
+                </form>
+            </section>
+
+            <!-- RIGHT PANEL: CANLI LOG TERMINALI -->
+            <section class="recon-card log-card">
+                <h3><i class="fas fa-terminal"></i> Live Execution Log</h3>
+                <div id="recon-console-output" class="recon-console">
+                    <div class="log-line info">[SYS] Recon Hub istifadəyə hazırdır. Hedef daxil edin...</div>
+                </div>
+            </section>
+
+            <!-- BOTTOM PANEL: RESULTS DISPLAY -->
+            <section class="recon-card results-card">
+                <h3><i class="fas fa-network-wired"></i> Recon Results & Intelligence</h3>
+                
+                <div class="results-grid">
+                    <div class="res-box">
+                        <h4>Target Summary</h4>
+                        <div id="res-target-summary" class="res-content">Hələ tarama edilməyib.</div>
+                    </div>
+                    <div class="res-box">
+                        <h4>Open Ports & Services</h4>
+                        <div id="res-ports" class="res-content">Açıq portlar yoxdur.</div>
+                    </div>
+                    <div class="res-box">
+                        <h4>Discovered Subdomains</h4>
+                        <div id="res-subdomains" class="res-content">Subdomain tapılmayıb.</div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="recon.js"></script>
+</body>
+</html>

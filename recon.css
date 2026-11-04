@@ -1,0 +1,289 @@
+/* RECON HUB EXCLUSIVE STYLES */
+body.recon-body {
+    background-color: #0b0f19;
+    color: #c9d1d9;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* LOGIN OVERLAY */
+.recon-login-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(11, 15, 25, 0.96);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+}
+
+.recon-login-box {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 30px;
+    width: 340px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(16, 185, 129, 0.2);
+    text-align: center;
+}
+
+.recon-login-header {
+    color: #10b981;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+
+.recon-login-header i {
+    font-size: 2rem;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.recon-login-box p {
+    font-size: 0.85rem;
+    color: #8b949e;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8b949e;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 10px 10px 36px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #00ff66;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: #10b981;
+}
+
+#recon-login-btn {
+    width: 100%;
+    padding: 10px;
+    background: #10b981;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+#recon-login-btn:hover {
+    background: #059669;
+    color: #fff;
+}
+
+.error-msg {
+    color: #ff5f56;
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+
+/* MAIN DASHBOARD */
+.recon-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.recon-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #161b22;
+    border: 1px solid #30363d;
+    padding: 15px 25px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.header-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #10b981;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #8b949e;
+}
+
+.status-indicator.online {
+    width: 10px;
+    height: 10px;
+    background: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10b981;
+}
+
+.recon-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 20px;
+}
+
+.recon-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.recon-card h3 {
+    margin-top: 0;
+    color: #58a6ff;
+    font-size: 1rem;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recon-input-group {
+    margin-bottom: 15px;
+}
+
+.recon-input-group label {
+    display: block;
+    font-size: 0.85rem;
+    color: #8b949e;
+    margin-bottom: 6px;
+}
+
+.recon-input-group input {
+    width: 100%;
+    padding: 10px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #fff;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.recon-input-group input:focus {
+    border-color: #58a6ff;
+}
+
+.recon-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.checkbox-label {
+    font-size: 0.85rem;
+    color: #c9d1d9;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.scan-btn {
+    width: 100%;
+    padding: 12px;
+    background: #238636;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.scan-btn:hover {
+    background: #2ea043;
+}
+
+/* CONSOLE LOG */
+.log-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.recon-console {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 15px;
+    height: 220px;
+    overflow-y: auto;
+    font-family: 'Fira Code', Consolas, monospace;
+    font-size: 0.85rem;
+}
+
+.log-line {
+    margin-bottom: 6px;
+}
+
+.log-line.info { color: #8b949e; }
+.log-line.success { color: #10b981; }
+.log-line.warn { color: #d2a8ff; }
+.log-line.error { color: #ff5f56; }
+
+/* RESULTS GRID */
+.results-card {
+    grid-column: 1 / -1;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.res-box {
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 15px;
+}
+
+.res-box h4 {
+    margin-top: 0;
+    color: #10b981;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.res-content {
+    font-size: 0.85rem;
+    color: #8b949e;
+    font-family: monospace;
+    white-space: pre-wrap;
+}
