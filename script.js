@@ -2,7 +2,7 @@
 // 1. GİRİŞ VƏ PAROL YOXLANIŞI (INDEX & APP)
 // ==========================================
 const AUTH_USER = "rat";
-const AUTH_PASS = "@@@@stfu@@@@42";
+const AUTH_PASS = "Admin@123!";
 
 function handleLogin(event) {
     if (event && event.preventDefault) event.preventDefault();
