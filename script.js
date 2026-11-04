@@ -3,7 +3,7 @@ const AUTH_USER = "rat";
 const AUTH_PASS = "@@@@stfu@@@@42";
 
 function handleLogin(event) {
-    if (event) event.preventDefault(); // Səhifənin yenilənməsinin qarşısını alırıq
+    if (event && event.preventDefault) event.preventDefault(); // Səhifənin yenilənməsinin qarşısını alırıq
 
     const userInp = document.getElementById("login-username");
     const passInp = document.getElementById("login-password");
@@ -27,6 +27,9 @@ function handleLogin(event) {
         }
     }
 }
+// Həm checkAuth, həm handleLogin kimi HTML-dən və JS-dən çağırıla bilsin
+window.handleLogin = handleLogin;
+window.checkAuth = handleLogin;
 
 // Hash Generator Funksiyası
 async function generateHash() {
@@ -42,11 +45,54 @@ async function generateHash() {
 
     output.value = hashHex;
 }
+window.generateHash = generateHash;
 
-// WebSocket Bağlantısı
-const socket = new WebSocket("wss://rat-terminal-backend.onrender.com/ws");
+// WebSocket Bağlantısı (Yalnız terminal olan səhifədə başlatmaq üçün)
+let socket = null;
+if (document.getElementById("cli-input") || document.getElementById("output-history")) {
+    socket = new WebSocket("wss://rat-terminal-backend.onrender.com/ws");
+
+    socket.onopen = () => {
+        console.log("Connected to Render backend server!");
+    };
+
+    socket.onmessage = (event) => {
+        const history = document.getElementById("output-history");
+        const terminalBody = document.getElementById("terminal-body");
+
+        let rawText = event.data;
+        let textToDisplay = "";
+
+        try {
+            const response = JSON.parse(rawText);
+            
+            if (response.type === "cwd") {
+                currentPath = response.pwd;
+                updatePromptPath();
+                textToDisplay = response.output || "";
+            } else if (response.output !== undefined) {
+                textToDisplay = response.output;
+            } else {
+                textToDisplay = rawText;
+            }
+        } catch (e) {
+            textToDisplay = rawText;
+        }
+
+        if (textToDisplay && history) {
+            const resLine = document.createElement("div");
+            resLine.className = "output-line";
+            resLine.innerText = textToDisplay;
+            history.appendChild(resLine);
+        }
+
+        if (terminalBody) {
+            terminalBody.scrollTop = terminalBody.scrollHeight;
+        }
+    };
+}
+
 let currentPath = "~";
-
 let commandHistory = [];
 let historyIndex = -1;
 
@@ -56,51 +102,12 @@ const availableCommands = [
     "cat", "nano", "vim", "git", "ifconfig", "netstat"
 ];
 
-socket.onopen = () => {
-    console.log("Connected to Render backend server!");
-};
-
-socket.onmessage = (event) => {
-    const history = document.getElementById("output-history");
-    const terminalBody = document.getElementById("terminal-body");
-
-    let rawText = event.data;
-    let textToDisplay = "";
-
-    try {
-        const response = JSON.parse(rawText);
-        
-        if (response.type === "cwd") {
-            currentPath = response.pwd;
-            updatePromptPath();
-            textToDisplay = response.output || "";
-        } else if (response.output !== undefined) {
-            textToDisplay = response.output;
-        } else {
-            textToDisplay = rawText;
-        }
-    } catch (e) {
-        textToDisplay = rawText;
-    }
-
-    if (textToDisplay) {
-        const resLine = document.createElement("div");
-        resLine.className = "output-line";
-        resLine.innerText = textToDisplay;
-        history.appendChild(resLine);
-    }
-
-    if (terminalBody) {
-        terminalBody.scrollTop = terminalBody.scrollHeight;
-    }
-};
-
 function updatePromptPath() {
     const promptPathElements = document.querySelectorAll(".prompt-path");
     promptPathElements.forEach(el => el.innerText = currentPath);
 }
 
-// SƏHİFƏ YÜKLƏNDİKDƏ İŞƏ DÜŞƏN HADİSƏLƏR (BİR HİSSƏDƏ YIĞILDI)
+// SƏHİFƏ YÜKLƏNDİKDƏ İŞƏ DÜŞƏN HADİSƏLƏR
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Session Yoxlanışı
     if (sessionStorage.getItem("authenticated") === "true") {
@@ -111,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 2. Daxil Ol Düyməsinə Click Hadisəsi
     const loginBtn = document.getElementById("login-btn");
     if (loginBtn) {
-        loginBtn.addEventListener("click", checkAuth);
+        loginBtn.addEventListener("click", handleLogin);
     }
 
     // 3. Login Xanalarında Enter Hadisəsi
@@ -120,16 +127,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (passInput) {
         passInput.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") checkAuth();
+            if (e.key === "Enter") handleLogin(e);
         });
     }
     if (userInput) {
         userInput.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") checkAuth();
+            if (e.key === "Enter") handleLogin(e);
         });
     }
 
-    // 4. Terminal İdaroetmə Hadisələri (Enter, Oxlar, Tab)
+    // 4. Terminal İdarəetmə Hadisələri (Enter, Oxlar, Tab)
     const cliInput = document.getElementById("cli-input");
     if (cliInput) {
         cliInput.addEventListener("keydown", function(e) {
@@ -175,25 +182,29 @@ function processCommand(cmd) {
     const history = document.getElementById("output-history");
     const terminalBody = document.getElementById("terminal-body");
 
-    const cmdLine = document.createElement("div");
-    cmdLine.className = "output-line";
-    cmdLine.innerHTML = `<span class="prompt">rat@hub:<span class="prompt-path">${currentPath}</span>$</span> ${cmd}`;
-    history.appendChild(cmdLine);
+    if (history) {
+        const cmdLine = document.createElement("div");
+        cmdLine.className = "output-line";
+        cmdLine.innerHTML = `<span class="prompt">rat@hub:<span class="prompt-path">${currentPath}</span>$</span> ${cmd}`;
+        history.appendChild(cmdLine);
+    }
 
     const cleanCmd = cmd.trim();
 
     if (cleanCmd.toLowerCase() === 'clear') {
-        history.innerHTML = "";
+        if (history) history.innerHTML = "";
         return;
     }
 
-    if (socket.readyState === WebSocket.OPEN) {
+    if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify({ command: cleanCmd }));
     } else {
-        const errLine = document.createElement("div");
-        errLine.className = "output-line text-red";
-        errLine.innerText = "[!] Backend bağlantısı hazır deyil.";
-        history.appendChild(errLine);
+        if (history) {
+            const errLine = document.createElement("div");
+            errLine.className = "output-line text-red";
+            errLine.innerText = "[!] Backend bağlantısı hazır deyil.";
+            history.appendChild(errLine);
+        }
     }
 
     if (terminalBody) {
