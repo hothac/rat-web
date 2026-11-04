@@ -7,10 +7,11 @@ const AUTH_PASS = "Admin@123!";
 function handleLogin(event) {
     if (event && event.preventDefault) event.preventDefault();
 
-    const userInp = document.getElementById("login-username");
-    const passInp = document.getElementById("login-password");
-    const errorEl = document.getElementById("login-error");
-    const modal = document.getElementById("login-modal");
+    // Hem index.html (username) hem app.html (login-username) ID'lerini destekliyoruz
+    const userInp = document.getElementById("username") || document.getElementById("login-username");
+    const passInp = document.getElementById("password") || document.getElementById("login-password");
+    const errorEl = document.getElementById("error-msg") || document.getElementById("login-error");
+    const modal = document.getElementById("login-card") || document.getElementById("login-modal");
     const panelCard = document.getElementById("panel-card");
 
     if (!userInp || !passInp) return;
@@ -27,6 +28,7 @@ function handleLogin(event) {
         }
         if (panelCard) {
             panelCard.classList.remove("hidden");
+            panelCard.style.display = "flex";
         }
 
         const cli = document.getElementById("cli-input");
@@ -173,25 +175,32 @@ function processCommand(cmd) {
 // 3. SƏHİFƏ YÜKLƏNDİKDƏ İŞƏ DÜŞƏN MƏNTİQ
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. Session Yoxlanışı (Giriş edilibsə modalı gizlət, paneli göstər)
     if (sessionStorage.getItem("authenticated") === "true") {
-        const modal = document.getElementById("login-modal");
+        const modal = document.getElementById("login-card") || document.getElementById("login-modal");
         const panelCard = document.getElementById("panel-card");
+        
         if (modal) {
             modal.classList.add("hidden");
             modal.style.setProperty("display", "none", "important");
         }
         if (panelCard) {
             panelCard.classList.remove("hidden");
+            panelCard.style.display = "flex";
         }
     }
 
-    const loginBtn = document.getElementById("login-btn");
+    // 2. Daxil Ol Düyməsi Dinləyicisi (Həm index.html, həm app.html üçün)
+    const loginBtn = document.getElementById("login-btn") || 
+                     document.querySelector("button[onclick*='handleLogin']") ||
+                     document.querySelector("#login-card button");
     if (loginBtn) {
-        loginBtn.addEventListener("click", handleLogin);
+        loginBtn.onclick = handleLogin;
     }
 
-    const passInput = document.getElementById("login-password");
-    const userInput = document.getElementById("login-username");
+    // 3. Login Xanalarında Enter Dinləyicisi
+    const passInput = document.getElementById("password") || document.getElementById("login-password");
+    const userInput = document.getElementById("username") || document.getElementById("login-username");
 
     if (passInput) {
         passInput.addEventListener("keydown", (e) => {
@@ -204,6 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // 4. Terminal İdarəetmə Hadisələri (Yalnız app.html üçün)
     const cliInput = document.getElementById("cli-input");
     if (cliInput) {
         cliInput.addEventListener("keydown", function(e) {
@@ -244,3 +254,37 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+function processCommand(cmd) {
+    const history = document.getElementById("output-history");
+    const terminalBody = document.getElementById("terminal-body");
+
+    if (history) {
+        const cmdLine = document.createElement("div");
+        cmdLine.className = "output-line";
+        cmdLine.innerHTML = `<span class="prompt">rat@hub:<span class="prompt-path">${currentPath}</span>$</span> ${cmd}`;
+        history.appendChild(cmdLine);
+    }
+
+    const cleanCmd = cmd.trim();
+
+    if (cleanCmd.toLowerCase() === 'clear') {
+        if (history) history.innerHTML = "";
+        return;
+    }
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ command: cleanCmd }));
+    } else {
+        if (history) {
+            const errLine = document.createElement("div");
+            errLine.className = "output-line text-red";
+            errLine.innerText = "[!] Backend bağlantısı hazır deyil.";
+            history.appendChild(errLine);
+        }
+    }
+
+    if (terminalBody) {
+        terminalBody.scrollTop = terminalBody.scrollHeight;
+    }
+}
